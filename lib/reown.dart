@@ -37,8 +37,7 @@ class Appkit{
       metadata: const PairingMetadata(
         name: "JPYC Invoice App",
         description: "Generate EIP-681",
-        url: "https://github.com/ChocoTanaka/Metamask_EIP-681_Pay",
-        icons: ["https://raw.githubusercontent.com/ChocoTanaka/Metamask_EIP-681_Pay/master/cable_50dp.png"],
+        url: "https://github.com/ChocoTanaka/Metamask_EIP-681_Pay_Web",
         redirect: Redirect(
           native: 'jpycinvoice://',
         ),

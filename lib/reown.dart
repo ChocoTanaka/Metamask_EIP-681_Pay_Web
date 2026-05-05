@@ -33,13 +33,15 @@ class Appkit{
 
     final appKit = await ReownAppKit.createInstance(
       projectId: const String.fromEnvironment("ProjectId"),
-      relayUrl: 'wss://relay.walletconnect.com',
+
       metadata: const PairingMetadata(
         name: "JPYC Invoice App",
         description: "Generate EIP-681",
         url: "https://github.com/ChocoTanaka/Metamask_EIP-681_Pay_Web",
+        icons: ['https://chocotanaka.github.io/Metamask_EIP-681_Pay_Web/Assets/JPYCPay_512.png'],
         redirect: Redirect(
           native: 'jpycinvoice://',
+          universal: 'https://chocotanaka.github.io/Metamask_EIP-681_Pay_Web/'
         ),
       ),
     );

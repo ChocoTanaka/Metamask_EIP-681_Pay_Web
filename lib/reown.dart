@@ -40,7 +40,7 @@ class Appkit{
         url: "https://github.com/ChocoTanaka/Metamask_EIP-681_Pay_Web",
         icons: ['https://chocotanaka.github.io/Metamask_EIP-681_Pay_Web/Assets/JPYCPay_512.png'],
         redirect: Redirect(
-          native: 'jpycinvoice://',
+          //delete native
           universal: 'https://chocotanaka.github.io/Metamask_EIP-681_Pay_Web/'
         ),
       ),

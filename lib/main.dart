@@ -87,6 +87,7 @@ class MPSs_Home extends State<MPSs_Stateful>{
             appkit.userAddress = address;
             appkit.addressNotifier.value = address;
           });
+          appkit.addressNotifier.addListener(_handleAppKitUpdate);
         }
       }
     } catch (e) {

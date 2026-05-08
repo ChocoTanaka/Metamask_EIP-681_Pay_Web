@@ -309,8 +309,7 @@ class _MPSsState_Write extends State<Page2> {
           child: ElevatedButton(
               onPressed:() {
                 if(appkit.userAddress != "" &&
-                    amount !=0 &&
-                    (tag1_s.length,tag2_s.length,tag3_s.length,tag4_s.length) == (4,4,4,4)
+                    amount !=0
                 ){
                   setState(() {
                     final BigInt amountWei = BigInt.from(amount * 1e18);

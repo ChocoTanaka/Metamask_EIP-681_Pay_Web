@@ -3,6 +3,10 @@ import 'reown.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner_plus/qr_code_scanner_plus.dart';
 import 'Web3.dart';
+import 'dart:js_interop';
+
+@JS('sendTransactionJS')
+external JSPromise<JSString?> _sendTransactionJS(JSAny tx);
 
 class Page1 extends StatefulWidget {
   const Page1({super.key, required this.title, required this.address});
@@ -23,7 +27,20 @@ class _MPSsState_Read extends State<Page1> {
   Barcode? result;
   QRViewController? controller;
 
+  Future<void> requestSignatureJS(Map<String, dynamic> tx) async {
+    // DartのMapをJSオブジェクトに変換
+    // js_interopのユーティリティを使って変換するか、単純なjs_util等を使用
+    final jsTx = tx.jsify()!;
 
+    final JSString? txHash = await _sendTransactionJS(jsTx).toDart;
+
+    if (txHash != null) {
+      print('Transaction Hash: ${txHash.toDart}');
+      // 成功後の処理
+    } else {
+      print('Transaction failed or rejected');
+    }
+  }
 
   @override
   void reassemble() {

@@ -1,6 +1,5 @@
 import 'dart:convert';
-import 'dart:js_interop';
-import 'dart:js_interop_unsafe'; // 拡張機能へのアクセスに便利
+
 
 final String JPYCAddress = "0xE7C3D8C9a439feDe00D2600032D5dB0Be71C3c29";
 
@@ -86,23 +85,7 @@ String buildErc20TransferData(String to, BigInt amount, String tag) {
   return dat;
 }
 
-@JS('sendTransactionJS')
-external JSPromise<JSString?> _sendTransactionJS(JSAny tx);
 
-Future<void> requestSignatureJS(Map<String, dynamic> tx) async {
-  // DartのMapをJSオブジェクトに変換
-  // js_interopのユーティリティを使って変換するか、単純なjs_util等を使用
-  final jsTx = tx.jsify()!;
-
-  final JSString? txHash = await _sendTransactionJS(jsTx).toDart;
-
-  if (txHash != null) {
-    print('Transaction Hash: ${txHash.toDart}');
-    // 成功後の処理
-  } else {
-    print('Transaction failed or rejected');
-  }
-}
 
 String toHex(String tag) {
   final bytes = utf8.encode(tag);   // 文字列 → バイト列

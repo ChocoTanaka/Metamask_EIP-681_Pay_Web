@@ -52,9 +52,9 @@ class _MPSsState_Write extends State<Page2> {
       children: <Widget>[
         Text(
           '請求書',
-          style: const TextStyle(fontSize: 48),
+          style: const TextStyle(fontSize: 36),
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 40),
         Row(
           children: <Widget>[
             Text(
@@ -64,7 +64,7 @@ class _MPSsState_Write extends State<Page2> {
             const SizedBox(height: 20),
             Text(
               '様',
-              style: const TextStyle(fontSize: 48),
+              style: const TextStyle(fontSize: 36),
             ),
           ],
         ),
@@ -73,7 +73,7 @@ class _MPSsState_Write extends State<Page2> {
           children: <Widget>[
             Text(
               '請求額：',
-              style: const TextStyle(fontSize: 48),
+              style: const TextStyle(fontSize: 36),
             ),
             const SizedBox(height: 20),
             Row(
@@ -107,14 +107,14 @@ class _MPSsState_Write extends State<Page2> {
         ),
         const SizedBox(height: 30),
         Container(
-          width: 500,
-          height: 500,
+          width: 400,
+          height: 400,
           decoration: BoxDecoration(
             border: Border.all(color: Colors.black, width: 2), // 黒い枠線
           ),
           child: QrImageView(
             data: generatedUri!,
-            size: 440,
+            size: 350,
           ),
         ),
       ],

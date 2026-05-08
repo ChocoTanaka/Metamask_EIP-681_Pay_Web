@@ -145,7 +145,7 @@ class MPSs_Home extends State<MPSs_Stateful>{
                   }
                 },
                 child: const Icon(Icons.cable),
-                backgroundColor: address!= null ? Colors.blue : Colors.grey[200],
+                backgroundColor: appkit.userAddress.isNotEmpty ? Colors.blue : Colors.grey[200],
               );
             }
         )

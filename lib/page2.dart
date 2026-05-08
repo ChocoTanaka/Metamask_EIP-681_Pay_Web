@@ -17,6 +17,8 @@ class Page2 extends StatefulWidget {
 }
 
 class _MPSsState_Write extends State<Page2> {
+  final appkit = Appkit(); // factoryなのでどこで呼んでも同じインスタンス
+
   final TextEditingController amountController = TextEditingController();
   final TextEditingController tag1 = TextEditingController();
   final TextEditingController tag2 = TextEditingController();
@@ -42,7 +44,7 @@ class _MPSsState_Write extends State<Page2> {
   @override
   void initState(){
     super.initState();
-
+    print("LISTENING TO: ${appkit.addressNotifier.hashCode}");
   }
 
   Widget Left_View(){

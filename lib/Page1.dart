@@ -19,6 +19,8 @@ class Page1 extends StatefulWidget {
 }
 
 class _MPSsState_Read extends State<Page1> {
+  final appkit = Appkit(); // factoryなのでどこで呼んでも同じインスタンス
+
   int i_situ = 0;
   String Text_Error="";
   String Read_Text = "";

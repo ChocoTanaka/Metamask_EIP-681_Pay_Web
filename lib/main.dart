@@ -42,7 +42,7 @@ class MPSs_Stateful extends StatefulWidget {
 }
 
 class MPSs_Home extends State<MPSs_Stateful>{
-
+  final appkit = Appkit(); // factoryなのでどこで呼んでも同じインスタンス
   int _selectedIndex = 0;
 
   void _onItemTapped(int index) {
@@ -83,11 +83,9 @@ class MPSs_Home extends State<MPSs_Stateful>{
           print("MetaMaskが見つかりません");
         } else {
           print("Connected Address: $address");
-          setState(() {
-            appkit.userAddress = address;
-            appkit.addressNotifier.value = address;
-            print("Connected Address: ${appkit.userAddress}");
-          });
+          print("WRITING TO: ${appkit.addressNotifier.hashCode}");
+          appkit.addressNotifier.value = address;
+          print("Connected Address: ${appkit.userAddress}");
         }
       }
     } catch (e) {
@@ -97,10 +95,10 @@ class MPSs_Home extends State<MPSs_Stateful>{
 
   @override
   void dispose() {
-    if(Platform.isAndroid || Platform.isIOS){
+    if(!kIsWeb && (Platform.isAndroid || Platform.isIOS)){
       appkit.Disconnect();
     }
-
+    appkit.addressNotifier.removeListener(_handleAppKitUpdate); // メモリリーク防止
     super.dispose();
   }
 

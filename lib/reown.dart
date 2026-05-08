@@ -2,10 +2,6 @@ import "package:flutter/material.dart";
 import "package:reown_appkit/reown_appkit.dart";
 
 
-
-Appkit appkit = Appkit();
-
-
 String maskMiddle(String text, {int head = 6, int tail = 6}) {
   if (text.length <= head + tail) {
     return text; // 短すぎる場合はそのまま
@@ -16,11 +12,21 @@ String maskMiddle(String text, {int head = 6, int tail = 6}) {
 }
 
 class Appkit{
+// 1. クラス内部で自分自身の唯一のインスタンスを作る
+  static final Appkit _instance = Appkit._internal();
 
-  String userAddress="";
+  // 2. コンストラクタが呼ばれたら、必ず上のインスタンスを返す
+  factory Appkit() {
+    return _instance;
+  }
 
-  final ValueNotifier<String?> addressNotifier =
-  ValueNotifier(null);
+  // 3. 内部用コンストラクタ
+  Appkit._internal();
+
+  // 4. これが共有される唯一の箱
+  final ValueNotifier<String> addressNotifier = ValueNotifier<String>("");
+
+  String get userAddress => addressNotifier.value;
 
 
   ReownAppKitModal? appKitModal;
@@ -80,7 +86,6 @@ class Appkit{
         if (accounts.isEmpty) return;
 
         final address = accounts.first.split(':')[2];
-        userAddress = address;
         addressNotifier.value = address;
       }
     });

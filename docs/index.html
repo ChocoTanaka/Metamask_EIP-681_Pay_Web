@@ -37,14 +37,21 @@
   <script>
     async function connectMetaMask() {
       if (window.ethereum) {
-        try {
-          // 接続要求
-          const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-          return accounts[0]; // アドレスを返す
-        } catch (error) {
-          console.error("User rejected", error);
-          return null;
+        // すでに接続済みかチェック（これを入れると安定します）
+        if (window.ethereum.selectedAddress) {
+          console.log("Already connected:", window.ethereum.selectedAddress);
+          return window.ethereum.selectedAddress;
         }
+
+        const accounts = await window.ethereum.request({
+          method: 'eth_requestAccounts'
+        });
+
+        if (accounts && accounts.length > 0) {
+          console.log("New connection:", accounts[0]);
+          return accounts[0];
+        }
+        return null;
       } else {
         alert("MetaMask is not installed!");
         return null;

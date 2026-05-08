@@ -57,14 +57,14 @@ class _MPSsState_Write extends State<Page2> {
         Row(
           children: <Widget>[
             Text(
-              'アドレス：',
-              style: const TextStyle(fontSize: 48),
+              tag_name_s,
+              style: const TextStyle(fontSize: 36),
             ),
             const SizedBox(height: 20),
             Text(
-              appkit.userAddress,
-              style: const TextStyle(fontSize: 36),
-            )
+              '様',
+              style: const TextStyle(fontSize: 48),
+            ),
           ],
         ),
         const SizedBox(height: 20),

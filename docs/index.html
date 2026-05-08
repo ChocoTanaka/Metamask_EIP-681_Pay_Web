@@ -34,5 +34,38 @@
 </head>
 <body>
   <script src="flutter_bootstrap.js" async></script>
+  <script>
+    async function connectMetaMask() {
+      if (window.ethereum) {
+        try {
+          // 接続要求
+          const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+          return accounts[0]; // アドレスを返す
+        } catch (error) {
+          console.error("User rejected", error);
+          return null;
+        }
+      } else {
+        alert("MetaMask is not installed!");
+        return null;
+      }
+    }
+  </script>
+  <script>
+    async sendTransactionJS(tx) {
+      if (typeof window.ethereum === 'undefined') return null;
+      try {
+    // Reownのrequestとほぼ同じ構造で叩けます
+        const txHash = await window.ethereum.request({
+          method: 'eth_sendTransaction',
+          params: [tx], // txはDart側で作ったMapがそのままJSオブジェクトとして渡ります
+        });
+        return txHash;
+      } catch (error) {
+        console.error("Transaction Error:", error);
+        return null;
+      }
+    }
+  </script>
 </body>
 </html>

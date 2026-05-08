@@ -97,4 +97,17 @@ class Appkit{
   void Disconnect() async{
     await appKitModal?.disconnect();
   }
+
+  Future RequestTx(Map<String, dynamic> tx) async{
+    final response = await appKitModal?.request(
+      topic: appKitModal?.session!.topic,
+      chainId: 'eip155:137',
+      request: SessionRequestParams(
+          method: "eth_sendTransaction",
+          params: [tx]
+      ),
+    );
+    // 成功すると、トランザクションハッシュが返ってきます
+    print('Transaction Hash: $response');
+  }
 }

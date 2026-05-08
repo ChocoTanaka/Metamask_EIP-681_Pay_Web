@@ -1,7 +1,5 @@
-import 'dart:io';
-import 'package:reown_appkit/appkit_modal.dart';
-import 'package:reown_appkit/reown_appkit.dart';
-import 'Reown.dart';
+import 'package:flutter/foundation.dart';
+import 'reown.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner_plus/qr_code_scanner_plus.dart';
 import 'Web3.dart';
@@ -138,16 +136,12 @@ class _MPSsState_Read extends State<Page1> {
                   amount: tx_R.amount,
                   tag: tx_R.tag
               );
-              final response = await appkit.appKitModal?.request(
-                topic: appkit.appKitModal?.session!.topic,
-                chainId: 'eip155:137',
-                request: SessionRequestParams(
-                    method: "eth_sendTransaction",
-                    params: [tx]
-                ),
-              );
-              // 成功すると、トランザクションハッシュが返ってきます
-              print('Transaction Hash: $response');
+              if(kIsWeb){
+                // WebならJS Interop経由
+                await requestSignatureJS(tx);
+              }else{
+                await appkit.RequestTx(tx);
+              }
               Navigator.pop(context);
             },
           )

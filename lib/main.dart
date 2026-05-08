@@ -1,7 +1,14 @@
+import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'reown.dart';
 import 'Page1.dart';
 import 'Page2.dart';
+import 'dart:js_interop' as js;
+
+// JSの関数を定義
+@js.JS('connectMetaMask')
+external js.JSPromise<js.JSString?> _connectMetaMask();
 
 void main() {
   runApp(const MPSs());
@@ -47,10 +54,12 @@ class MPSs_Home extends State<MPSs_Stateful>{
   @override
   initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      appkit.appKitInit(context);
-    });
-    appkit.addressNotifier.addListener(_handleAppKitUpdate);
+    if(!kIsWeb && (Platform.isAndroid || Platform.isIOS)){
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        appkit.appKitInit(context);
+      });
+      appkit.addressNotifier.addListener(_handleAppKitUpdate);
+    }
   }
 
   // 通知が来たら呼ばれる関数
@@ -63,9 +72,34 @@ class MPSs_Home extends State<MPSs_Stateful>{
     }
   }
 
+  Future<void> connectWeb3() async {
+    try {
+      // JSの関数を呼び出し（PromiseをawaitするためにtoDartを使用）
+      final js.JSString? result = await _connectMetaMask().toDart;
+
+      if (result != null) {
+        final String address = result.toDart;
+        if (address == "NOT_INSTALLED") {
+          print("MetaMaskが見つかりません");
+        } else {
+          print("Connected Address: $address");
+          setState(() {
+            appkit.userAddress = address;
+            appkit.addressNotifier.value = address;
+          });
+        }
+      }
+    } catch (e) {
+      print("JS Interop Error: $e");
+    }
+  }
+
   @override
   void dispose() {
-    appkit.Disconnect();
+    if(Platform.isAndroid || Platform.isIOS){
+      appkit.Disconnect();
+    }
+
     super.dispose();
   }
 
@@ -100,10 +134,16 @@ class MPSs_Home extends State<MPSs_Stateful>{
             valueListenable: appkit.addressNotifier,
             builder: (context, address, _){
               return FloatingActionButton(
-                onPressed: () {
+                onPressed: () async{
                   print("session");
                   print(appkit.appKitModal?.session);
-                  appkit.Openview();
+                  if (kIsWeb) {
+                    await connectWeb3(); // これだけで MetaMask が起動し、userAddress に値が入る
+                    print('Connected Address: ${appkit.userAddress}');
+                  } else {
+                    // Androidなどは従来通り
+                    appkit.Openview();
+                  }
                 },
                 child: const Icon(Icons.cable),
                 backgroundColor: address!= null ? Colors.blue : Colors.grey[200],

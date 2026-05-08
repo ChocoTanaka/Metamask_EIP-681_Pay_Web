@@ -48,6 +48,12 @@ class _MPSsState_Read extends State<Page1> {
     controller!.pauseCamera();
   }
 
+  @override
+  void initState(){
+    super.initState();
+    print("page1 LISTENING TO: ${Appkit().addressNotifier.hashCode}");
+  }
+
   void _onQRViewCreated(QRViewController controller){
     this.controller = controller;
     controller.scannedDataStream.listen((scanData) async{

@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'Reown.dart';
+import 'reown.dart';
 import 'Web3.dart';
 
 
@@ -42,7 +42,7 @@ class _MPSsState_Write extends State<Page2> {
   @override
   void initState(){
     super.initState();
-    print("LISTENING TO: ${Appkit().addressNotifier.hashCode}");
+    print("page2 LISTENING TO: ${Appkit().addressNotifier.hashCode}");
   }
 
   Widget Left_View(){

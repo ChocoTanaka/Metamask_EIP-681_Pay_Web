@@ -53,17 +53,17 @@ class _MPSsState_Write extends State<Page2> {
           '請求書',
           style: const TextStyle(fontSize: 36),
         ),
-        const SizedBox(height: 40),
+        const SizedBox(height: 20),
         Row(
           children: <Widget>[
             Text(
               tag_name_s,
-              style: const TextStyle(fontSize: 36),
+              style: const TextStyle(fontSize: 28),
             ),
             const SizedBox(height: 20),
             Text(
               '様',
-              style: const TextStyle(fontSize: 36),
+              style: const TextStyle(fontSize: 28),
             ),
           ],
         ),
@@ -72,19 +72,19 @@ class _MPSsState_Write extends State<Page2> {
           children: <Widget>[
             Text(
               '請求額：',
-              style: const TextStyle(fontSize: 36),
+              style: const TextStyle(fontSize: 28),
             ),
             const SizedBox(height: 20),
             Row(
               children: <Widget>[
                 Text(
                   amount.toString(),
-                  style: const TextStyle(fontSize: 36),
+                  style: const TextStyle(fontSize: 28),
                 ),
                 const SizedBox(height: 10),
                 Text(
                   'JPYC',
-                  style: const TextStyle(fontSize: 36),
+                  style: const TextStyle(fontSize: 28),
                 ),
               ],
             )
@@ -95,25 +95,25 @@ class _MPSsState_Write extends State<Page2> {
           children: <Widget>[
             Text(
               '請求書番号：',
-              style: const TextStyle(fontSize: 48),
+              style: const TextStyle(fontSize: 28),
             ),
             const SizedBox(height: 20),
             Text(
               '${tag1_s} - ${tag2_s} - ${tag3_s} - ${tag4_s}',
-              style: const TextStyle(fontSize: 36),
+              style: const TextStyle(fontSize: 28),
             )
           ],
         ),
         const SizedBox(height: 30),
         Container(
-          width: 400,
-          height: 400,
+          width: 300,
+          height: 300,
           decoration: BoxDecoration(
             border: Border.all(color: Colors.black, width: 2), // 黒い枠線
           ),
           child: QrImageView(
             data: generatedUri!,
-            size: 350,
+            size: 250,
           ),
         ),
       ],

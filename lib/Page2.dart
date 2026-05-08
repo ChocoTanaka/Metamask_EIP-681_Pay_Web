@@ -7,9 +7,8 @@ import 'Web3.dart';
 
 
 class Page2 extends StatefulWidget {
-  const Page2({super.key, required this.title, required this.address});
+  const Page2({super.key, required this.title});
 
-  final String address;
   final String title;
 
   @override

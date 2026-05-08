@@ -106,8 +106,8 @@ class MPSs_Home extends State<MPSs_Stateful>{
 
 
     final _screens = [
-      Page2(title: 'WriteQR',address: appkit.userAddress),
-      Page1(title: 'ReadQR',address: appkit.userAddress),
+      Page2(title: 'WriteQR'),
+      Page1(title: 'ReadQR'),
     ];
 
     return Scaffold(

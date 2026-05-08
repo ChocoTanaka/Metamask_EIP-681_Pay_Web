@@ -9,9 +9,8 @@ import 'dart:js_interop';
 external JSPromise<JSString?> _sendTransactionJS(JSAny tx);
 
 class Page1 extends StatefulWidget {
-  const Page1({super.key, required this.title, required this.address});
+  const Page1({super.key, required this.title});
 
-  final String address;
   final String title;
 
   @override

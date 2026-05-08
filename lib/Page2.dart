@@ -16,7 +16,6 @@ class Page2 extends StatefulWidget {
 }
 
 class _MPSsState_Write extends State<Page2> {
-  final appkit = Appkit(); // factoryなのでどこで呼んでも同じインスタンス
 
   final TextEditingController amountController = TextEditingController();
   final TextEditingController tag1 = TextEditingController();
@@ -32,7 +31,7 @@ class _MPSsState_Write extends State<Page2> {
   bool isTag = false;
 
   String URI(BigInt Wei, String tag){
-    String uri = 'ethereum:$JPYCAddress@137/transfer?address=${appkit.userAddress}&uint256=$Wei';
+    String uri = 'ethereum:$JPYCAddress@137/transfer?address=${Appkit().userAddress}&uint256=$Wei';
     if(tag.isNotEmpty && tag.length ==16){
       uri += '&tag=$tag';
     }
@@ -43,7 +42,7 @@ class _MPSsState_Write extends State<Page2> {
   @override
   void initState(){
     super.initState();
-    print("LISTENING TO: ${appkit.addressNotifier.hashCode}");
+    print("LISTENING TO: ${Appkit().addressNotifier.hashCode}");
   }
 
   Widget Left_View(){
@@ -132,7 +131,7 @@ class _MPSsState_Write extends State<Page2> {
             ),
             const SizedBox(width: 10),
             Text(
-              appkit.userAddress.isNotEmpty ? maskMiddle(appkit.userAddress, head: 6, tail: 6) : "Not Connected",
+              Appkit().userAddress.isNotEmpty ? maskMiddle(Appkit().userAddress, head: 6, tail: 6) : "Not Connected",
               style: const TextStyle(fontSize: 28),
               overflow: TextOverflow.ellipsis,
             )
@@ -309,7 +308,7 @@ class _MPSsState_Write extends State<Page2> {
           height:75,
           child: ElevatedButton(
               onPressed:() {
-                if(appkit.userAddress != "" &&
+                if(Appkit().userAddress != "" &&
                     amount !=0
                 ){
                   setState(() {

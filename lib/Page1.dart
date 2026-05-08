@@ -18,7 +18,6 @@ class Page1 extends StatefulWidget {
 }
 
 class _MPSsState_Read extends State<Page1> {
-  final appkit = Appkit(); // factoryなのでどこで呼んでも同じインスタンス
 
   int i_situ = 0;
   String Text_Error="";
@@ -148,7 +147,7 @@ class _MPSsState_Read extends State<Page1> {
             ),
             onTap: () async {
               final tx = buildTransaction(
-                  from: appkit.userAddress,
+                  from: Appkit().userAddress,
                   tokenAddress: tx_R.token,
                   to: tx_R.to,
                   amount: tx_R.amount,
@@ -158,7 +157,7 @@ class _MPSsState_Read extends State<Page1> {
                 // WebならJS Interop経由
                 await requestSignatureJS(tx);
               }else{
-                await appkit.RequestTx(tx);
+                await Appkit().RequestTx(tx);
               }
               Navigator.pop(context);
             },
@@ -199,7 +198,7 @@ class _MPSsState_Read extends State<Page1> {
               URI.isNotEmpty ?
               ElevatedButton(
                   onPressed: () async {
-                    if(URI.isNotEmpty && appkit.userAddress !=""){
+                    if(URI.isNotEmpty && Appkit().userAddress !=""){
                       setState(() {
                         Text_Error = "";
                         Read_Text = "Check Phase...";
@@ -222,7 +221,7 @@ class _MPSsState_Read extends State<Page1> {
                     ),
                   ),
                   style: ElevatedButton.styleFrom(
-                      backgroundColor: (URI.isNotEmpty && appkit.userAddress !="") ? Colors.deepPurple[200] : Colors.grey
+                      backgroundColor: (URI.isNotEmpty && Appkit().userAddress !="") ? Colors.deepPurple[200] : Colors.grey
                   )
               )
                   :
@@ -242,11 +241,11 @@ class _MPSsState_Read extends State<Page1> {
             child: Center(
                 child:ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                      backgroundColor: appkit.userAddress !="" ? Colors.deepPurple[200] : Colors.grey
+                      backgroundColor: Appkit().userAddress !="" ? Colors.deepPurple[200] : Colors.grey
                   ),
                   onPressed: () {
                     setState(() {
-                      if(appkit.userAddress !=""){
+                      if(Appkit().userAddress !=""){
                         i_situ = 1;
                       }
                     });
@@ -289,11 +288,11 @@ class _MPSsState_Read extends State<Page1> {
             child: Center(
                 child:ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                      backgroundColor: appkit.userAddress !="" ? Colors.deepPurple[200] : Colors.grey
+                      backgroundColor: Appkit().userAddress !="" ? Colors.deepPurple[200] : Colors.grey
                   ),
                   onPressed: () {
                     setState(() {
-                      if(appkit.userAddress !=""){
+                      if(Appkit().userAddress !=""){
                         i_situ = 1;
                       }
                     });

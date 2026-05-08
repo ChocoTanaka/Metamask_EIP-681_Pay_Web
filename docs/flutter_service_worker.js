@@ -145,13 +145,13 @@ const RESOURCES = {"assets/AssetManifest.bin": "4b41d890d3d3970b0a4ee9a8547de413
 "canvaskit/skwasm_heavy.js.symbols": "3c01ec03b5de6d62c34e17014d1decd3",
 "canvaskit/skwasm_heavy.wasm": "8034ad26ba2485dab2fd49bdd786837b",
 "flutter.js": "888483df48293866f9f41d3d9274a779",
-"flutter_bootstrap.js": "aa1c5c3edc3184d565d1c0eb384d66ce",
+"flutter_bootstrap.js": "3e603da9240f045cd6127c3957273f0c",
 "icons/JPYCPay_192.png": "5002487d45df47d0df669495398b1663",
 "icons/JPYCPay_512.png": "fd058366771f4b124b5910351bdd9f80",
-"index.html": "331c598d3821e3df3e58513cbe197c95",
-"/": "331c598d3821e3df3e58513cbe197c95",
+"index.html": "390fa091db6f578d51a7879ad877a212",
+"/": "390fa091db6f578d51a7879ad877a212",
 "JPYCPay_fav.png": "18fa8d4d516aa92b55a170ccb1f9ddb2",
-"main.dart.js": "ea0f5c5ed5ac12f61cf4dbb22788b910",
+"main.dart.js": "63ccbcd8cbface61b14f81ac738a252c",
 "manifest.json": "4d77eb44ad495edf8a8ce224db060be3",
 "version.json": "a11b544e431f524c241f19c7733ae951"};
 // The application shell files that are downloaded before a service worker can

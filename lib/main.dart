@@ -86,6 +86,7 @@ class MPSs_Home extends State<MPSs_Stateful>{
           setState(() {
             appkit.userAddress = address;
             appkit.addressNotifier.value = address;
+            print("Connected Address: ${appkit.userAddress}");
           });
         }
       }

@@ -50,9 +50,8 @@
         return null;
       }
     }
-  </script>
-  <script>
-    async sendTransactionJS(tx) {
+
+    async function sendTransactionJS(tx) {
       if (typeof window.ethereum === 'undefined') return null;
       try {
     // Reownのrequestとほぼ同じ構造で叩けます

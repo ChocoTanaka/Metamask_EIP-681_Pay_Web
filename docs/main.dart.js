@@ -38805,7 +38805,8 @@ A.xb.prototype={
 ai(){return new A.xa()}}
 A.xa.prototype={
 a5b(a){this.a8(new A.a21(this,a))},
-an(){this.aL()},
+an(){this.aL()
+$.fv().b.X(0,this.ga0W())},
 a0X(){if(this.c!=null)this.a8(new A.a20())},
 w3(){var s=0,r=A.T(t.H),q=1,p=[],o=this,n,m,l,k,j
 var $async$w3=A.U(function(a,b){if(a===1){p.push(b)
@@ -38816,8 +38817,7 @@ case 6:n=b
 if(n!=null){m=n
 if(J.d(m,"NOT_INSTALLED"))A.kT("MetaMask\u304c\u898b\u3064\u304b\u308a\u307e\u305b\u3093")
 else{A.kT("Connected Address: "+A.l(m))
-o.a8(new A.a24(m))
-$.fv().b.X(0,o.ga0W())}}q=1
+o.a8(new A.a24(m))}}q=1
 s=5
 break
 case 3:q=2

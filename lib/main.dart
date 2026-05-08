@@ -58,8 +58,8 @@ class MPSs_Home extends State<MPSs_Stateful>{
       WidgetsBinding.instance.addPostFrameCallback((_) {
         appkit.appKitInit(context);
       });
-      appkit.addressNotifier.addListener(_handleAppKitUpdate);
     }
+    appkit.addressNotifier.addListener(_handleAppKitUpdate);
   }
 
   // 通知が来たら呼ばれる関数
@@ -87,7 +87,6 @@ class MPSs_Home extends State<MPSs_Stateful>{
             appkit.userAddress = address;
             appkit.addressNotifier.value = address;
           });
-          appkit.addressNotifier.addListener(_handleAppKitUpdate);
         }
       }
     } catch (e) {

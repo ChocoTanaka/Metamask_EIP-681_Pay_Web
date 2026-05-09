@@ -78,11 +78,6 @@ String buildErc20TransferData(String to, BigInt amount, String tag) {
 
   String dat = '0x$methodId$toPadded$amountPadded';
 
-  /*
-  if(tag.isNotEmpty){
-    dat += toHex(tag);
-  }
-  */
   return dat;
 }
 

@@ -145,7 +145,7 @@ const RESOURCES = {"assets/AssetManifest.bin": "4b41d890d3d3970b0a4ee9a8547de413
 "canvaskit/skwasm_heavy.js.symbols": "3c01ec03b5de6d62c34e17014d1decd3",
 "canvaskit/skwasm_heavy.wasm": "8034ad26ba2485dab2fd49bdd786837b",
 "flutter.js": "888483df48293866f9f41d3d9274a779",
-"flutter_bootstrap.js": "715d05bfec94d34e18d5542f7502480c",
+"flutter_bootstrap.js": "824c5998fe390cea275e92d020c3c97a",
 "icons/JPYCPay_192.png": "5002487d45df47d0df669495398b1663",
 "icons/JPYCPay_512.png": "fd058366771f4b124b5910351bdd9f80",
 "index.html": "6bcecb4e1be70b8fe7b8367306c9f842",

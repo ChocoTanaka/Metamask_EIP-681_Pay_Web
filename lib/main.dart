@@ -81,10 +81,7 @@ class MPSs_Home extends State<MPSs_Stateful>{
         if (address == "NOT_INSTALLED") {
           print("MetaMaskが見つかりません");
         } else {
-          print("Connected Address: $address");
-          print("WRITING TO: ${Appkit().addressNotifier.hashCode}");
           Appkit().addressNotifier.value = address;
-          print("Connected Address: ${Appkit().userAddress}");
         }
       }
     } catch (e) {

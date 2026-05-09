@@ -42,7 +42,6 @@ class _MPSsState_Write extends State<Page2> {
   @override
   void initState(){
     super.initState();
-    print("page2 LISTENING TO: ${Appkit().addressNotifier.hashCode}");
   }
 
   Widget Left_View(){

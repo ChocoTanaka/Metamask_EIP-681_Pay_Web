@@ -56,6 +56,12 @@ class _MPSsState_Read extends State<Page1> {
 
   void _onQRViewCreated(QRViewController controller){
     this.controller = controller;
+
+    // Web版では明示的にカメラを再開させるのが安定のコツです
+    if (kIsWeb) {
+      controller.resumeCamera();
+    }
+
     controller.scannedDataStream.listen((scanData) async{
       if(i_situ==1){
         setState(() {
@@ -272,6 +278,13 @@ class _MPSsState_Read extends State<Page1> {
           child: QRView(
             key: qrKey,
             onQRViewCreated: _onQRViewCreated,
+            overlay: QrScannerOverlayShape(
+              borderColor: Colors.red,
+              borderRadius: 10,
+              borderLength: 30,
+              borderWidth: 10,
+              cutOutSize: 450,
+            ),
           ),
         );
       case 2:
@@ -289,8 +302,8 @@ class _MPSsState_Read extends State<Page1> {
         );
       default:
         return SizedBox(
-            height:600,
-            width:600,
+            height:500,
+            width:500,
             child: Center(
                 child:ElevatedButton(
                   style: ElevatedButton.styleFrom(

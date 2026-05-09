@@ -28,6 +28,7 @@ class _MPSsState_Read extends State<Page1> {
   final _controller = MobileScannerController(
     facing: CameraFacing.back,
     detectionSpeed: DetectionSpeed.normal, // 連続検知を防ぐために速度を調整
+    autoStart: true
   );
 
 
@@ -223,7 +224,6 @@ class _MPSsState_Read extends State<Page1> {
                   ),
                   onPressed: () async{
                     if(Appkit().userAddress !="") {
-                      await _controller.start();
                       setState(() {
                         i_situ = 1;
                       });

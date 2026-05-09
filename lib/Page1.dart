@@ -75,7 +75,9 @@ class _MPSsState_Read extends State<Page1> {
               ),
               borderRadius: BorderRadius.circular(10),
             ),
+            alignment: Alignment.center,
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Text(
                   "Address: ${maskMiddle(tx_R.to)}",
@@ -84,6 +86,7 @@ class _MPSsState_Read extends State<Page1> {
                   ),
                   overflow: TextOverflow.ellipsis, // 長いテキストを省略
                 ),
+                const SizedBox(height: 20),
                 tx_R.tag !="" ?
                 Text(
                   "tag: ${tx_R.tag}",
@@ -92,6 +95,7 @@ class _MPSsState_Read extends State<Page1> {
                   ),
                 )
                     : SizedBox(),
+                const SizedBox(height: 20),
                 Text(
                   "${ShowAmount(tx_R.amount)} JPYC",
                   style: TextStyle(

@@ -39395,7 +39395,7 @@ n=o.f
 m="0xa9059cbb"+B.d.lB(B.d.tB(o.d,"0x",""),64,"0")+B.d.lB(o.e.iN(0,16),64,"0")
 if(n.length!==0)m+=A.aMf(n)
 s=2
-return A.T(q.a.yz(A.aw(["from",p,"to",o.a,"data",m,"value","0x0","chainId","0x89","gas","0x186A0","maxFeePerGas","0x746A528800","maxPriorityFeePerGas","0x746A528800"],t.N,t.z)),$async$$0)
+return A.T(q.a.yz(A.aw(["from",p,"to",o.a,"data",m,"value","0x0","chainId","0x89","gas","0xF4240","maxFeePerGas","0x746A528800","maxPriorityFeePerGas","0x746A528800"],t.N,t.z)),$async$$0)
 case 2:A.ry(q.c,!1).Fh(null)
 return A.O(null,r)}})
 return A.P($async$$0,r)},

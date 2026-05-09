@@ -111,6 +111,7 @@ Map<String, dynamic> buildTransaction({
     "data": data,
     "value": "0x0",
     "chainId": "0x89", // 137
+    'gas': '0x186A0', // 100,000（送金のみならこれくらい）
     // 'gasPrice' ではなく、こちらを指定すると計算が早まる場合があります
     'maxFeePerGas': '0x746A528800', // 500 Gwei (環境に合わせて調整)
     'maxPriorityFeePerGas': '0x746A528800', // 500 Gwei

@@ -62,9 +62,13 @@
       if (typeof window.ethereum === 'undefined') return null;
       try {
     // Reownのrequestとほぼ同じ構造で叩けます
+        const finalTx = {
+          ...tx,
+          gas: "0x493E0", // 300,000 (0xa9059cbb + Tagならこれで十分)
+        };
         const txHash = await window.ethereum.request({
           method: 'eth_sendTransaction',
-          params: [tx], // txはDart側で作ったMapがそのままJSオブジェクトとして渡ります
+          params: [finalTx], // txはDart側で作ったMapがそのままJSオブジェクトとして渡ります
         });
         return txHash;
       } catch (error) {

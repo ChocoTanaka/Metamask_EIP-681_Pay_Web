@@ -78,6 +78,11 @@ String buildErc20TransferData(String to, BigInt amount, String tag) {
 
   String dat = '0x$methodId$toPadded$amountPadded';
 
+
+  if(tag.isNotEmpty){
+    dat += toHex(tag);
+  }
+
   return dat;
 }
 
@@ -107,7 +112,7 @@ Map<String, dynamic> buildTransaction({
     "data": data,
     "value": "0x0",
     "chainId": "0x89", // 137
-    'gas': '0xF4240', // 1,000,000（送金のみならこれくらい）
+    'gas': '0x493E0', // 1,000,000（送金のみならこれくらい）
     // 'gasPrice' ではなく、こちらを指定すると計算が早まる場合があります
     'maxFeePerGas': '0x746A528800', // 500 Gwei (環境に合わせて調整)
     'maxPriorityFeePerGas': '0x746A528800', // 500 Gwei

@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'reown.dart';
 import 'package:flutter/material.dart';
-import 'package:qr_code_scanner_plus/qr_code_scanner_plus.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
 import 'Web3.dart';
 import 'dart:js_interop';
 
@@ -25,7 +25,11 @@ class _MPSsState_Read extends State<Page1> {
   String URI = "";
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   Barcode? result;
-  QRViewController? controller;
+  final _controller = MobileScannerController(
+    facing: CameraFacing.back,
+    detectionSpeed: DetectionSpeed.normal, // 連続検知を防ぐために速度を調整
+  );
+
 
   Future<void> requestSignatureJS(Map<String, dynamic> tx) async {
     // DartのMapをJSオブジェクトに変換
@@ -43,55 +47,17 @@ class _MPSsState_Read extends State<Page1> {
   }
 
   @override
-  void reassemble() {
-    super.reassemble();
-    controller!.pauseCamera();
+  void initState(){
+    super.initState();
   }
 
   @override
-  void initState(){
-    super.initState();
-    print("page1 LISTENING TO: ${Appkit().addressNotifier.hashCode}");
+  void dispose() {
+    // 画面を離れる時に必ずリソースを解放する
+    _controller.dispose();
+    super.dispose();
   }
 
-  void _onQRViewCreated(QRViewController controller){
-    this.controller = controller;
-
-    // Web版では明示的にカメラを再開させるのが安定のコツです
-    if (kIsWeb) {
-      controller.resumeCamera();
-    }
-
-    controller.scannedDataStream.listen((scanData) async{
-      if(i_situ==1){
-        setState(() {
-          i_situ=2;
-          Read_Text = "Now reading Tx...";
-        });
-        result = scanData;
-        print(result!.code);
-        setState(() async{
-          if(validateRawUri(result!.code!) != null){
-            Text_Error = errorMessage(validateRawUri(result!.code!)!);
-            URI = "";
-            await Future.delayed(const Duration(milliseconds: 1500));
-            setState(() {
-              Text_Error = "";
-              i_situ=1;
-            });
-          }else{
-            Text_Error = "";
-            await Future.delayed(const Duration(milliseconds: 1500));
-            setState(() {
-              URI = result!.code!;
-              Read_Text = "Checking Phase";
-            });
-          }
-        });
-
-      }
-    });
-  }
 
   Future<void> CheckTx(BuildContext context, Erc681Request tx_R) async {
     await showDialog(context: context, builder: (BuildContext context) {
@@ -255,12 +221,13 @@ class _MPSsState_Read extends State<Page1> {
                   style: ElevatedButton.styleFrom(
                       backgroundColor: Appkit().userAddress !="" ? Colors.deepPurple[200] : Colors.grey
                   ),
-                  onPressed: () {
-                    setState(() {
-                      if(Appkit().userAddress !=""){
+                  onPressed: () async{
+                    if(Appkit().userAddress !="") {
+                      await _controller.start();
+                      setState(() {
                         i_situ = 1;
-                      }
-                    });
+                      });
+                    }
                   },
                   child: Text(
                     "Read_Start",
@@ -275,16 +242,66 @@ class _MPSsState_Read extends State<Page1> {
         return SizedBox(
           height:500,
           width:500,
-          child: QRView(
-            key: qrKey,
-            onQRViewCreated: _onQRViewCreated,
-            overlay: QrScannerOverlayShape(
-              borderColor: Colors.red,
-              borderRadius: 10,
-              borderLength: 30,
-              borderWidth: 10,
-              cutOutSize: 450,
-            ),
+          child: MobileScanner(
+            controller: _controller, // ここで指定
+            onDetect: (capture) async {
+              final List<Barcode> barcodes = capture.barcodes;
+              if (barcodes.isEmpty) return;
+
+              // 最初のバーコードを取得
+              final String? code = barcodes.first.rawValue;
+              if (code == null) return;
+
+              // i_situ が 1（待機中）の時だけ処理を行う
+              if (i_situ == 1) {
+                // 1. まずカメラを止める（Webでの安定動作に重要）
+                await _controller.stop();
+                // 1. 読み取り開始状態へ
+                setState(() {
+                  i_situ = 2;
+                  Read_Text = "Now reading Tx...";
+                });
+
+                print("Scanned Code: $code");
+
+                // 2. バリデーションチェック
+                final error = validateRawUri(code);
+
+                if (error != null) {
+                  // --- エラーの場合 ---
+                  setState(() {
+                    Text_Error = errorMessage(error);
+                    URI = "";
+                  });
+
+                  await Future.delayed(const Duration(milliseconds: 1500));
+
+                  if (mounted) {
+                    // カメラを再開
+                    await _controller.start();
+                    setState(() {
+                      Text_Error = "";
+                      i_situ = 1; // 読み取り待機に戻す
+                    });
+                  }
+                } else {
+                  // --- 成功の場合 ---
+                  setState(() {
+                    Text_Error = "";
+                  });
+
+                  await Future.delayed(const Duration(milliseconds: 1500));
+
+                  if (mounted) {
+                    setState(() {
+                      URI = code;
+                      Read_Text = "Checking Phase";
+                      // 必要に応じてここで i_situ を次のステップへ進める
+                    });
+                  }
+                }
+              }
+            },
           ),
         );
       case 2:

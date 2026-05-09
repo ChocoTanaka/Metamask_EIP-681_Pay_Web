@@ -102,8 +102,8 @@ class MPSs_Home extends State<MPSs_Stateful>{
 
 
     final _screens = [
-      Page2(title: 'WriteQR'),
-      Page1(title: 'ReadQR'),
+      Page2(title: 'Metamask JPYC Sub-Payment System WriteQR'),
+      Page1(title: 'Metamask JPYC Sub-Payment System ReadQR'),
     ];
 
     return Scaffold(

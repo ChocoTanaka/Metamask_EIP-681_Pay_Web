@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'reown.dart';
 import 'Web3.dart';
+import 'PDF.dart';
 
 
 class Page2 extends StatefulWidget {
@@ -23,8 +24,9 @@ class _MPSsState_Write extends State<Page2> {
   final TextEditingController tag3 = TextEditingController();
   final TextEditingController tag4 = TextEditingController();
   final TextEditingController tag_name = TextEditingController();
+  final TextEditingController tag_reciever = TextEditingController();
 
-  late String tag1_s = "",tag2_s = "",tag3_s = "",tag4_s ="", tag_name_s = "";
+  late String tag1_s = "",tag2_s = "",tag3_s = "",tag4_s ="", tag_name_s = "", reciever = "";
   String? generatedUri;
   int amount = 0;
   bool isShow = false;
@@ -48,72 +50,97 @@ class _MPSsState_Write extends State<Page2> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        Text(
-          '請求書',
-          style: const TextStyle(fontSize: 36),
-        ),
-        const SizedBox(height: 20),
-        Row(
-          children: <Widget>[
-            Text(
-              tag_name_s,
-              style: const TextStyle(fontSize: 28),
-            ),
-            const SizedBox(height: 20),
-            Text(
-              '様',
-              style: const TextStyle(fontSize: 28),
-            ),
-          ],
-        ),
-        const SizedBox(height: 20),
-        Row(
-          children: <Widget>[
-            Text(
-              '請求額：',
-              style: const TextStyle(fontSize: 28),
-            ),
-            const SizedBox(height: 20),
-            Row(
-              children: <Widget>[
-                Text(
-                  amount.toString(),
-                  style: const TextStyle(fontSize: 28),
+        Expanded(
+          flex: 9,
+          child: Column(
+            children: [
+              Text(
+                '請求書',
+                style: const TextStyle(fontSize: 36),
+              ),
+              const SizedBox(height: 20),
+              Row(
+                children: <Widget>[
+                  Text(
+                    tag_name_s,
+                    style: const TextStyle(fontSize: 28),
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    '　様',
+                    style: const TextStyle(fontSize: 28),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              Row(
+                children: <Widget>[
+                  Text(
+                    '請求額：',
+                    style: const TextStyle(fontSize: 28),
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    children: <Widget>[
+                      Text(
+                        amount.toString(),
+                        style: const TextStyle(fontSize: 28),
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        '　JPYC',
+                        style: const TextStyle(fontSize: 28),
+                      ),
+                    ],
+                  )
+                ],
+              ),
+              const SizedBox(height: 20),
+              Row(
+                children: <Widget>[
+                  Text(
+                    '請求書番号：',
+                    style: const TextStyle(fontSize: 28),
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    '${tag1_s} - ${tag2_s} - ${tag3_s} - ${tag4_s}',
+                    style: const TextStyle(fontSize: 28),
+                  )
+                ],
+              ),
+              const SizedBox(height: 30),
+              Container(
+                width: 300,
+                height: 300,
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.black, width: 2), // 黒い枠線
                 ),
-                const SizedBox(height: 10),
-                Text(
-                  'JPYC',
-                  style: const TextStyle(fontSize: 28),
+                child: QrImageView(
+                  data: generatedUri!,
+                  size: 250,
                 ),
-              ],
-            )
-          ],
+              ),
+            ],
+          )
         ),
-        const SizedBox(height: 20),
-        Row(
-          children: <Widget>[
-            Text(
-              '請求書番号：',
-              style: const TextStyle(fontSize: 28),
-            ),
-            const SizedBox(height: 20),
-            Text(
-              '${tag1_s} - ${tag2_s} - ${tag3_s} - ${tag4_s}',
-              style: const TextStyle(fontSize: 28),
+        Expanded(
+          flex: 1,
+            child: ElevatedButton(
+                onPressed:() async{
+                    makePdf(
+                      tag_name_s,
+                      amount,
+                      tag1_s,tag2_s,tag3_s,tag4_s,
+                      generatedUri!,
+                      reciever
+                    );
+                  },
+                child: Text(
+                  'PDFを発行する',
+                  style: const TextStyle(fontSize: 28),
+                )
             )
-          ],
-        ),
-        const SizedBox(height: 30),
-        Container(
-          width: 300,
-          height: 300,
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.black, width: 2), // 黒い枠線
-          ),
-          child: QrImageView(
-            data: generatedUri!,
-            size: 250,
-          ),
         ),
       ],
     );
@@ -176,7 +203,7 @@ class _MPSsState_Write extends State<Page2> {
             )
           ],
         ),
-        const SizedBox(height: 50),
+        const SizedBox(height: 40),
         Row(
           children: [
             Flexible(
@@ -271,7 +298,7 @@ class _MPSsState_Write extends State<Page2> {
             )
           ],
         ),
-        const SizedBox(height: 50),
+        const SizedBox(height: 40),
         Row(
           children: [
             Expanded(
@@ -294,14 +321,38 @@ class _MPSsState_Write extends State<Page2> {
             Text(
               "JPYC",
               style: TextStyle(
-                  fontSize: 30,
+                  fontSize: 28,
                   fontWeight: FontWeight.bold,
                   color: Colors.black
               ),
             ),
           ],
         ),
-        const SizedBox(height: 100),
+        const SizedBox(height: 40),
+        Row(
+          children: [
+            Text(
+              "受取（自社名）:",
+              style: TextStyle(
+                  fontSize: 28,
+                  color: Colors.black
+              ),
+            ),
+            const SizedBox(height: 20),
+            Expanded(
+              child: TextFormField(
+                controller: tag_reciever,
+                onChanged: (text)=> setState(() {
+                  reciever =tag_reciever.text;
+                }),
+                style: TextStyle(
+                  fontSize: 28,
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 75),
         Container(
           width: 300,
           height:75,
@@ -313,11 +364,8 @@ class _MPSsState_Write extends State<Page2> {
                   setState(() {
                     final BigInt amountWei = BigInt.from(amount * 1e18);
                     final tag = tag1_s+tag2_s+tag3_s+tag4_s;
-                    final uri =
-                    URI(amountWei,tag);
-                    print(uri);
+                    final uri = URI(amountWei,tag);
                     generatedUri = uri;
-
                     isShow = !isShow;
                   });
                 }else{

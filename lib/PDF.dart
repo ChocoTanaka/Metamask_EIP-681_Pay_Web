@@ -19,28 +19,29 @@ Future makePdf(
   final fontData = await rootBundle.load('fonts/NotoSansJP-Regular.ttf');
   final font = pw.Font.ttf(fontData);
 
+  final now = DateTime.now();
+  final dateFormatter = DateFormat('yyyy年　MM月　dd日');
+
   pdf.addPage(
     pw.MultiPage(
       pageFormat: PdfPageFormat.a4,
       header: (pw.Context context) {
         return pw.Container(
-          alignment: pw.Alignment.centerRight,
-          margin: const pw.EdgeInsets.only(bottom: 20.0),
+          alignment: pw.Alignment.topRight,
           child: pw.Text(
-            "発行日: ${DateFormat('YYYY年 MM月 dd日', 'ja_JP').format(DateTime.now())}",
-            style: pw.TextStyle(font: font, fontSize: 10),
+            "発行日: ${dateFormatter.format(now)}",
+            style: pw.TextStyle(font: font, fontSize: 15),
           ),
         );
       },
       footer: (pw.Context context) {
         return pw.Container(
-          alignment: pw.Alignment.centerRight,
-          margin: const pw.EdgeInsets.only(top: 20.0),
+          alignment: pw.Alignment.bottomRight,
           child: pw.Column(
             children: [
               pw.Text(
                 Reciever,
-                style: pw.TextStyle(font: font, fontSize: 12, fontWeight: pw.FontWeight.bold),
+                style: pw.TextStyle(font: font, fontSize: 15, fontWeight: pw.FontWeight.bold),
               ),
             ],
           ),
@@ -51,24 +52,25 @@ Future makePdf(
           level: 0,
           child:pw.Text("請求書", style: pw.TextStyle(font: font, fontSize: 36)),
         ),
-        pw.Divider(),
         pw.SizedBox(height: 20),
-        pw.Text("$Name 様", style: pw.TextStyle(font: font,fontSize: 28)),
+        pw.Text("$Name 様", style: pw.TextStyle(font: font,fontSize: 20)),
         pw.SizedBox(height: 20),
-        pw.Text("金額: $amount JPYC", style: pw.TextStyle(font: font)),
-        pw.Text("管理番号: ${tag1} - ${tag2} - ${tag3} - ${tag4}", style: pw.TextStyle(font: font,fontSize: 28)),
+        pw.Text("金額: $amount JPYC", style: pw.TextStyle(font: font,fontSize: 20)),
+        pw.Text("管理番号: ${tag1} - ${tag2} - ${tag3} - ${tag4}", style: pw.TextStyle(font: font,fontSize: 20)),
         pw.SizedBox(height: 20),
-        pw.Text("ネットワーク: Polygon", style: pw.TextStyle(font: font)),
+        pw.Text("ネットワーク: Polygon", style: pw.TextStyle(font: font,fontSize: 20)),
         pw.SizedBox(height: 50),
-        pw.Container(
-          width: 300,
-          height: 300,
-          child: pw.BarcodeWidget(
-            data: uri, // ここにQRコードの文字列を渡す
-            barcode: pw.Barcode.qrCode(), // QRコード形式を指定
-            width: 250,
-            height: 250,
-          )
+        pw.Center(
+          child: pw.Container(
+              width: 300,
+              height: 300,
+              child: pw.BarcodeWidget(
+                data: uri, // ここにQRコードの文字列を渡す
+                barcode: pw.Barcode.qrCode(), // QRコード形式を指定
+                width: 250,
+                height: 250,
+              )
+          ),
         ),
       ],
     )

@@ -127,6 +127,12 @@ class _MPSsState_Write extends State<Page2> {
         Expanded(
           flex: 1,
             child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(0),
+                  ),
+                  backgroundColor: Colors.blue[200],
+                ),
                 onPressed:() async{
                     makePdf(
                       tag_name_s,

@@ -52,14 +52,20 @@ Future makePdf(
           level: 0,
           child:pw.Text("請求書", style: pw.TextStyle(font: font, fontSize: 36)),
         ),
-        pw.SizedBox(height: 20),
+        pw.SizedBox(height: 10),
         pw.Text("$Name 様", style: pw.TextStyle(font: font,fontSize: 20)),
         pw.SizedBox(height: 20),
         pw.Text("金額: $amount JPYC", style: pw.TextStyle(font: font,fontSize: 20)),
         pw.Text("管理番号: ${tag1} - ${tag2} - ${tag3} - ${tag4}", style: pw.TextStyle(font: font,fontSize: 20)),
         pw.SizedBox(height: 20),
         pw.Text("ネットワーク: Polygon", style: pw.TextStyle(font: font,fontSize: 20)),
-        pw.SizedBox(height: 50),
+        pw.SizedBox(height: 30),
+        pw.Center(
+          child: pw.Text(
+              "以下のバーコードを Metamask JPYC Sub-Payment Systemで読み込んでお支払いください。", style: pw.TextStyle(font: font,fontSize: 20)
+          ),
+        ),
+        pw.SizedBox(height: 30),
         pw.Center(
           child: pw.Container(
               width: 300,

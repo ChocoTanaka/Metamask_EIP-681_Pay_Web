@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!--
+    If you are serving your web app in a path other than the root, change the
+    href value below to reflect the base path you are serving from.
+
+    The path provided below has to start and end with a slash "/" in order for
+    it to work correctly.
+
+    For more details:
+    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
+
+    This is a placeholder for base href that will be replaced by the value of
+    the `--base-href` argument provided to `flutter build`.
+  -->
+  <base href="/Metamask_EIP-681_Pay_Web/">
+
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="description" content="This is a EIP-681 pay system for PC">
+
+  <!-- iOS meta tags & icons -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="erc681pay_dx">
+  <link rel="apple-touch-icon" href="icons/JPYCPay_192.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="JPYCPay_fav.png"/>
+
+  <title>erc681pay_dx</title>
+  <link rel="manifest" href="manifest.json">
+</head>
+<body>
+  <script src="flutter_bootstrap.js" async></script>
+  <script>
+    async function connectMetaMask() {
+      if (window.ethereum) {
+        // すでに接続済みかチェック（これを入れると安定します）
+        if (window.ethereum.selectedAddress) {
+          console.log("Already connected:", window.ethereum.selectedAddress);
+          return window.ethereum.selectedAddress;
+        }
+
+        const accounts = await window.ethereum.request({
+          method: 'eth_requestAccounts'
+        });
+
+        if (accounts && accounts.length > 0) {
+          console.log("New connection:", accounts[0]);
+          return accounts[0];
+        }
+        return null;
+      } else {
+        alert("Wallet not Selected");
+        return null;
+      }
+    }
+
+    async function sendTransactionJS(tx) {
+      if (typeof window.ethereum === 'undefined') return null;
+      try {
+    // Reownのrequestとほぼ同じ構造で叩けます
+        const finalTx = {
+          ...tx,
+          gas: "0x493E0", // 300,000 (0xa9059cbb + Tagならこれで十分)
+        };
+        const txHash = await window.ethereum.request({
+          method: 'eth_sendTransaction',
+          params: [finalTx], // txはDart側で作ったMapがそのままJSオブジェクトとして渡ります
+        });
+        return txHash;
+      } catch (error) {
+        console.error("Transaction Error:", error);
+        return null;
+      }
+    }
+  </script>
+</body>
+</html>

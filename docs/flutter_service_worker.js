@@ -3,9 +3,9 @@ const MANIFEST = 'flutter-app-manifest';
 const TEMP = 'flutter-temp-cache';
 const CACHE_NAME = 'flutter-app-cache';
 
-const RESOURCES = {"assets/AssetManifest.bin": "2434c7d8c80a3a5ed7b75224dbe5723a",
-"assets/AssetManifest.bin.json": "5bf2d46ee1d0f2f04437888eec8dab44",
-"assets/AssetManifest.json": "d80af086d76c75d86d0a1d6285654314",
+const RESOURCES = {"assets/AssetManifest.bin": "f2c8f6036d264e25a532947b1529216b",
+"assets/AssetManifest.bin.json": "2ccddf9988839a5037ae24a6a31dbfd6",
+"assets/AssetManifest.json": "34c62d0da3cfce429213c8e10b940c0f",
 "assets/assets/fonts/NotoSansJP-Black.ttf": "f55700e5fdc5ed4da6a829a10682fc0f",
 "assets/assets/fonts/NotoSansJP-Bold.ttf": "4e7d3ef67c05e1e313fccc82b3e9d739",
 "assets/assets/fonts/NotoSansJP-ExtraBold.ttf": "58aae45d35fb9f3084931b02b6f8dc70",
@@ -15,6 +15,7 @@ const RESOURCES = {"assets/AssetManifest.bin": "2434c7d8c80a3a5ed7b75224dbe5723a
 "assets/assets/fonts/NotoSansJP-Regular.ttf": "65fbbfe1bda810bed173daf97478019c",
 "assets/assets/fonts/NotoSansJP-SemiBold.ttf": "8213669d7659ac3f3e9613d0742e34da",
 "assets/assets/fonts/NotoSansJP-Thin.ttf": "bab18bfe12398161a92730f0b2279598",
+"assets/assets/images/JPYCPay_192.png": "5002487d45df47d0df669495398b1663",
 "assets/FontManifest.json": "46fa3b4fb2223d57023892925da13255",
 "assets/fonts/MaterialIcons-Regular.otf": "ddd102e48be4dfb278b0eeb0e446313e",
 "assets/fonts/NotoSansJP-Black.ttf": "f55700e5fdc5ed4da6a829a10682fc0f",
@@ -154,7 +155,7 @@ const RESOURCES = {"assets/AssetManifest.bin": "2434c7d8c80a3a5ed7b75224dbe5723a
 "canvaskit/skwasm_heavy.js.symbols": "3c01ec03b5de6d62c34e17014d1decd3",
 "canvaskit/skwasm_heavy.wasm": "8034ad26ba2485dab2fd49bdd786837b",
 "flutter.js": "888483df48293866f9f41d3d9274a779",
-"flutter_bootstrap.js": "2d319107684b5a65ec1bed5752689e22",
+"flutter_bootstrap.js": "cb2c6495b71521b9cd0eb7508e6dd190",
 "icons/JPYCPay_192.png": "5002487d45df47d0df669495398b1663",
 "icons/JPYCPay_512.png": "fd058366771f4b124b5910351bdd9f80",
 "index.html": "b1f552331c3158aceb7d6aaa79f244fd",

@@ -44,7 +44,7 @@ class Appkit{
         name: "JPYC Invoice App",
         description: "Generate EIP-681",
         url: "https://github.com/ChocoTanaka/Metamask_EIP-681_Pay_Web",
-        icons: ['https://chocotanaka.github.io/Metamask_EIP-681_Pay_Web/assets/JPYCPay_512.png'],
+        icons: ['https://chocotanaka.github.io/Metamask_EIP-681_Pay_Web/assets/images/JPYCPay_512.png'],
         redirect: Redirect(
           //delete native
           universal: 'https://chocotanaka.github.io/Metamask_EIP-681_Pay_Web/'

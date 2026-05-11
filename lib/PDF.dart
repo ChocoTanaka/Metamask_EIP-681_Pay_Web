@@ -19,6 +19,9 @@ Future makePdf(
   final fontData = await rootBundle.load('fonts/NotoSansJP-Regular.ttf');
   final font = pw.Font.ttf(fontData);
 
+  final img = await rootBundle.load('images/JPYCPay_192.png');
+  final imageBytes = img.buffer.asUint8List();
+
   final now = DateTime.now();
   final dateFormatter = DateFormat('yyyy年　MM月　dd日');
 
@@ -28,9 +31,20 @@ Future makePdf(
       header: (pw.Context context) {
         return pw.Container(
           alignment: pw.Alignment.topRight,
-          child: pw.Text(
-            "発行日: ${dateFormatter.format(now)}",
-            style: pw.TextStyle(font: font, fontSize: 15),
+          child: pw.Row(
+            mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: pw.CrossAxisAlignment.center,
+              children: [
+                pw.Container(
+                  alignment: pw.Alignment.center,
+                  height: 40,
+                  child: pw.Image(pw.MemoryImage(imageBytes))
+                ),
+                pw.Text(
+                  "発行日: ${dateFormatter.format(now)}",
+                  style: pw.TextStyle(font: font, fontSize: 15),
+                ),
+              ]
           ),
         );
       },

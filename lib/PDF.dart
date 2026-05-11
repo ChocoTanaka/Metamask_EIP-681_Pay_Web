@@ -16,10 +16,10 @@ Future makePdf(
     ) async {
   final pdf = pw.Document();
 
-  final fontData = await rootBundle.load('fonts/NotoSansJP-Regular.ttf');
+  final fontData = await rootBundle.load('assets/fonts/NotoSansJP-Regular.ttf');
   final font = pw.Font.ttf(fontData);
 
-  final img = await rootBundle.load('images/JPYCPay_192.png');
+  final img = await rootBundle.load('assets/images/JPYCPay_192.png');
   final imageBytes = img.buffer.asUint8List();
 
   final now = DateTime.now();

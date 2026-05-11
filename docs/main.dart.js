@@ -8178,12 +8178,12 @@ p=new B.a4T(B.aQT(!0,null,A.aNz,!1,A.FV),q)
 o=$.a1w()
 l=B
 s=2
-return B.V(o.lw(0,"fonts/NotoSansJP-Regular.ttf"),$async$J4)
+return B.V(o.lw(0,"assets/fonts/NotoSansJP-Regular.ttf"),$async$J4)
 case 2:n=new l.S0(j,null)
 l=J
 k=A.as
 s=3
-return B.V(o.lw(0,"images/JPYCPay_192.png"),$async$J4)
+return B.V(o.lw(0,"assets/images/JPYCPay_192.png"),$async$J4)
 case 3:m=l.dg(k.gZ(j))
 o=Date.now()
 o=B.aQm(new B.ax0(n,a,b,c,d,e,f,g),new B.ax1(h,n),new B.ax2(m,B.aNB("yyyy\u5e74\u3000MM\u6708\u3000dd\u65e5"),new B.fI(o,0,!1),n),A.FU)

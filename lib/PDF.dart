@@ -7,6 +7,10 @@ import 'dart:async';
 
 import 'package:printing/printing.dart';
 
+String s_isCompany(bool isCompany){
+  return isCompany ? "様" : "御中";
+}
+
 Future makePdf(
     String Name,
     bool isCompany,
@@ -17,9 +21,7 @@ Future makePdf(
     ) async {
   final pdf = pw.Document();
 
-  String s_isCompany(){
-    return isCompany ? "様" : "御中";
-  }
+
 
   final fontData = await rootBundle.load('assets/fonts/NotoSansJP-Regular.ttf');
   final font = pw.Font.ttf(fontData);
@@ -72,7 +74,7 @@ Future makePdf(
           child:pw.Text("支払用紙", style: pw.TextStyle(font: font, fontSize: 36)),
         ),
         pw.SizedBox(height: 10),
-        pw.Text("$Name　${s_isCompany}", style: pw.TextStyle(font: font,fontSize: 20)),
+        pw.Text("$Name　${s_isCompany(isCompany)}", style: pw.TextStyle(font: font,fontSize: 20)),
         pw.SizedBox(height: 20),
         pw.Text("金額: $amount JPYC", style: pw.TextStyle(font: font,fontSize: 20)),
         pw.Text("管理番号: ${tag1} - ${tag2} - ${tag3} - ${tag4}", style: pw.TextStyle(font: font,fontSize: 20)),

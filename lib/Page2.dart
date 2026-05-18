@@ -31,6 +31,11 @@ class _MPSsState_Write extends State<Page2> {
   int amount = 0;
   bool isShow = false;
   bool isTag = false;
+  bool isCompany = false;
+
+  String s_isCompany(){
+    return isCompany ? "様" : "御中";
+  }
 
   String URI(BigInt Wei, String tag){
     String uri = 'ethereum:$JPYCAddress@137/transfer?address=${Appkit().userAddress}&uint256=$Wei';
@@ -55,7 +60,7 @@ class _MPSsState_Write extends State<Page2> {
           child: Column(
             children: [
               Text(
-                '請求書',
+                '支払用紙',
                 style: const TextStyle(fontSize: 36),
               ),
               const SizedBox(height: 20),
@@ -67,7 +72,7 @@ class _MPSsState_Write extends State<Page2> {
                   ),
                   const SizedBox(height: 20),
                   Text(
-                    '　様',
+                    '　${s_isCompany()}',
                     style: const TextStyle(fontSize: 28),
                   ),
                 ],
@@ -136,6 +141,7 @@ class _MPSsState_Write extends State<Page2> {
                 onPressed:() async{
                     makePdf(
                       tag_name_s,
+                      isCompany,
                       amount,
                       tag1_s,tag2_s,tag3_s,tag4_s,
                       generatedUri!,
@@ -181,6 +187,14 @@ class _MPSsState_Write extends State<Page2> {
                             Flexible(
                                 child: Row(
                                   children: [
+                                    Switch(
+                                        value: isCompany,
+                                        onChanged: (bool val){
+                                          setState(() {
+                                            isCompany = val;
+                                          });
+                                        }
+                                    ),
                                     Text(
                                       "宛名:",
                                       style: const TextStyle(fontSize: 28),
@@ -197,6 +211,10 @@ class _MPSsState_Write extends State<Page2> {
                                           fontSize: 28,
                                         ),
                                       ),
+                                    ),
+                                    Text(
+                                      "   ${s_isCompany()}",
+                                      style: const TextStyle(fontSize: 28),
                                     ),
                                   ],
                                 )

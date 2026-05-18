@@ -33,9 +33,7 @@ class _MPSsState_Write extends State<Page2> {
   bool isTag = false;
   bool isCompany = false;
 
-  String s_isCompany(){
-    return isCompany ? "様" : "御中";
-  }
+  late String s_isCompany = isCompany ? "　　様" : "　　御中";
 
   String URI(BigInt Wei, String tag){
     String uri = 'ethereum:$JPYCAddress@137/transfer?address=${Appkit().userAddress}&uint256=$Wei';
@@ -72,7 +70,7 @@ class _MPSsState_Write extends State<Page2> {
                   ),
                   const SizedBox(height: 20),
                   Text(
-                    '　${s_isCompany()}',
+                    '　$s_isCompany',
                     style: const TextStyle(fontSize: 28),
                   ),
                 ],
@@ -140,8 +138,7 @@ class _MPSsState_Write extends State<Page2> {
                 ),
                 onPressed:() async{
                     makePdf(
-                      tag_name_s,
-                      isCompany,
+                      tag_name_s + s_isCompany,
                       amount,
                       tag1_s,tag2_s,tag3_s,tag4_s,
                       generatedUri!,
@@ -213,7 +210,7 @@ class _MPSsState_Write extends State<Page2> {
                                       ),
                                     ),
                                     Text(
-                                      "   ${s_isCompany()}",
+                                      "$s_isCompany",
                                       style: const TextStyle(fontSize: 28),
                                     ),
                                   ],

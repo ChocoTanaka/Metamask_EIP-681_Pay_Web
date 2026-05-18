@@ -72,7 +72,7 @@ Future makePdf(
         pw.SizedBox(height: 10),
         pw.Row(
           children:[
-            pw.Text("$Name$s_isCompany", style: pw.TextStyle(font: font,fontSize: 20)),
+            pw.Text("$Name", style: pw.TextStyle(font: font,fontSize: 20)),
             pw.Text("$s_isCompany",style: pw.TextStyle(font: font,fontSize: 20)),
           ]
         ),

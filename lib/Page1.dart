@@ -164,7 +164,7 @@ class _MPSsState_Read extends State<Page1> {
 
       return AlertDialog(
           title: Text(title),
-          content: Row(
+          content: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
@@ -173,23 +173,28 @@ class _MPSsState_Read extends State<Page1> {
                   fontSize: 42,
                 ),
               ),
-              const SizedBox(height: 50),
-              Text(
-                txHash,
-                style: TextStyle(
-                  fontSize: 32,
-                ),
-              ),
-              const SizedBox(height: 40),
-              IconButton(
-                icon: const Icon(Icons.copy, size: 50),
-                onPressed: () {
-                  Clipboard.setData(ClipboardData(text: txHash));
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Text Copied")),
-                  );
-                },
-              ),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    txHash,
+                    style: TextStyle(
+                      fontSize: 28,
+                    ),
+                  ),
+                  const SizedBox(height: 40),
+                  IconButton(
+                    icon: const Icon(Icons.copy, size: 50),
+                    onPressed: () {
+                      Clipboard.setData(ClipboardData(text: txHash));
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("Text Copied")),
+                      );
+                    },
+                  ),
+                ],
+              )
             ],
           ),
           actions: <Widget>[

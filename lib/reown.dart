@@ -103,7 +103,7 @@ class Appkit{
     await appKitModal?.disconnect();
   }
 
-  Future RequestTx(Map<String, dynamic> tx) async{
+  Future<String> RequestTx(Map<String, dynamic> tx) async{
     final response = await appKitModal?.request(
       topic: appKitModal?.session!.topic,
       chainId: 'eip155:137',
@@ -114,5 +114,6 @@ class Appkit{
     );
     // 成功すると、トランザクションハッシュが返ってきます
     print('Transaction Hash: $response');
+    return "Success : ${response.toString()}";
   }
 }

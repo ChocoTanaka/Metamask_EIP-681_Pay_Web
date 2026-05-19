@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'reown.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
@@ -32,7 +33,7 @@ class _MPSsState_Read extends State<Page1> {
   );
 
 
-  Future<void> requestSignatureJS(Map<String, dynamic> tx) async {
+  Future<String> requestSignatureJS(Map<String, dynamic> tx) async {
     // DartのMapをJSオブジェクトに変換
     // js_interopのユーティリティを使って変換するか、単純なjs_util等を使用
     final jsTx = tx.jsify()!;
@@ -42,8 +43,10 @@ class _MPSsState_Read extends State<Page1> {
     if (txHash != null) {
       print('Transaction Hash: ${txHash.toDart}');
       // 成功後の処理
+      return "Success : ${txHash.toDart}";
     } else {
       print('Transaction failed or rejected');
+      return "Failure";
     }
   }
 
@@ -121,6 +124,7 @@ class _MPSsState_Read extends State<Page1> {
               Navigator.pop(context);
             },
           ),
+          const SizedBox(height: 50),
           GestureDetector(
             child: const Text(
               'OK',
@@ -136,18 +140,69 @@ class _MPSsState_Read extends State<Page1> {
                   amount: tx_R.amount,
                   tag: tx_R.tag
               );
+              String hash = "";
               if(kIsWeb){
                 // WebならJS Interop経由
-                await requestSignatureJS(tx);
+                hash = await requestSignatureJS(tx);
               }else{
-                await Appkit().RequestTx(tx);
+               hash = await Appkit().RequestTx(tx);
               }
               Navigator.pop(context);
+              if(hash.startsWith("Success")){
+                Check_Hash(context, "送金完了", hash);
+              }
             },
           )
         ],
       );
     });
+  }
+
+  void Check_Hash(BuildContext context, String title, String content) {
+    showDialog(context: context, builder: (BuildContext context) {
+      String txHash = content.split(" : ")[1];
+
+      return AlertDialog(
+          title: Text(title),
+          content: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                "Tx hash:",
+                style: TextStyle(
+                  fontSize: 42,
+                ),
+              ),
+              const SizedBox(height: 50),
+              Text(
+                txHash,
+                style: TextStyle(
+                  fontSize: 32,
+                ),
+              ),
+              const SizedBox(height: 40),
+              IconButton(
+                icon: const Icon(Icons.copy, size: 50),
+                onPressed: () {
+                  Clipboard.setData(ClipboardData(text: txHash));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Text Copied")),
+                  );
+                },
+              ),
+            ],
+          ),
+          actions: <Widget>[
+            GestureDetector(
+              child: const Text('閉じる'),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+          ]
+      );
+    },
+    );
   }
 
   @override

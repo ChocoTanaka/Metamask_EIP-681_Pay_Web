@@ -4,6 +4,8 @@ Metamask JPYC Sub-Payment SystemのWeb版です。
 
 [ここから使えます](https://chocotanaka.github.io/Metamask_EIP-681_Pay_Web/)
 
+[スマホ版はこちら](https://play.google.com/store/apps/details?id=com.tanakasenki.eip681pay&hl=ja)
+
 JPYC決済は即時決済よりも振込業務の形式が非常に親和性のあることから、
 
 スマホ版だけでなくパソコンでも使えるようにしました。

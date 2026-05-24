@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'reown.dart';
 import 'Page1.dart';
 import 'Page2.dart';
+import 'Page3.dart';
 import 'dart:js_interop' as js;
 
 // JSの関数を定義
@@ -20,7 +21,7 @@ class MPSs extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'MetaMask JPYC Payment Sub-system',
+      title: 'MetaMask JPYC Sub-Payment System',
       theme: ThemeData(
         fontFamily: "Noto Sans JP",
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
@@ -104,6 +105,7 @@ class MPSs_Home extends State<MPSs_Stateful>{
     final _screens = [
       Page2(title: 'Metamask JPYC Sub-Payment System WriteQR'),
       Page1(title: 'Metamask JPYC Sub-Payment System ReadQR'),
+      Page3(title: 'Metamask JPYC Sub-Payment Index')
     ];
 
     return Scaffold(
@@ -112,12 +114,14 @@ class MPSs_Home extends State<MPSs_Stateful>{
           children: <Widget>[
             NavigationRail(
                 destinations: [
-                  NavigationRailDestination(icon: Icon(Icons.qr_code_2), label: Text('Write')),
-                  NavigationRailDestination(icon: Icon(Icons.attach_money_outlined),label: Text('Read')),
+                  NavigationRailDestination(icon: Icon(Icons.qr_code_2,size: 42), label: Text('Write',style: const TextStyle(fontSize: 18))),
+                  NavigationRailDestination(icon: Icon(Icons.attach_money_outlined,size: 42),label: Text('Read',style: const TextStyle(fontSize: 18))),
+                  NavigationRailDestination(icon: Icon(Icons.book,size: 42),label: Text('Index',style: const TextStyle(fontSize: 18))),
                 ],
                 labelType: NavigationRailLabelType.all,
                 selectedIndex: _selectedIndex,
                 onDestinationSelected: _onItemTapped,
+                useIndicator: true,
             ),
             Expanded(
               child: _screens[_selectedIndex]
@@ -129,6 +133,7 @@ class MPSs_Home extends State<MPSs_Stateful>{
             valueListenable: Appkit().addressNotifier,
             builder: (context, address, _){
               return FloatingActionButton(
+                isExtended: true,
                 onPressed: () async{
                   if (kIsWeb) {
                     await connectWeb3(); // これだけで MetaMask が起動し、userAddress に値が入る
@@ -140,7 +145,7 @@ class MPSs_Home extends State<MPSs_Stateful>{
                     Appkit().Openview();
                   }
                 },
-                child: const Icon(Icons.cable),
+                child: const Icon(Icons.cable,size: 36),
                 backgroundColor: Appkit().userAddress.isNotEmpty ? Colors.blue : Colors.grey[200],
               );
             }

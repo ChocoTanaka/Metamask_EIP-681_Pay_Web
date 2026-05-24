@@ -90,9 +90,9 @@ class _MPSsState_Read extends State<Page1> {
                   overflow: TextOverflow.ellipsis, // 長いテキストを省略
                 ),
                 const SizedBox(height: 20),
-                tx_R.tag !="" ?
+                tx_R.tag !="" &&  tx_R.tag.length == 16 ?
                 Text(
-                  "tag: ${tx_R.tag}",
+                  "tag: ${filltag(tx_R.tag)}",
                   style: TextStyle(
                     fontSize: 32.0,
                   ),
@@ -163,7 +163,12 @@ class _MPSsState_Read extends State<Page1> {
       String txHash = content.split(" : ")[1];
 
       return AlertDialog(
-          title: Text(title),
+          title: Text(
+              title,
+            style: TextStyle(
+              fontSize: 36,
+            ),
+          ),
           content: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -199,7 +204,12 @@ class _MPSsState_Read extends State<Page1> {
           ),
           actions: <Widget>[
             GestureDetector(
-              child: const Text('閉じる'),
+              child: const Text(
+                  '閉じる',
+                style: TextStyle(
+                  fontSize: 36,
+                ),
+              ),
               onTap: () {
                 Navigator.pop(context);
               },

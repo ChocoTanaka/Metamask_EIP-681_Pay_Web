@@ -1,7 +1,12 @@
 import 'dart:convert';
-
+import 'package:flutter/material.dart';
+import 'package:web3dart/web3dart.dart';
+import 'package:http/http.dart' as http;
+import 'dart:math' as math;
 
 final String JPYCAddress = "0xE7C3D8C9a439feDe00D2600032D5dB0Be71C3c29";
+
+final JPYCDecimal = 18;
 
 enum UriCheckError {
   notEVMUri,
@@ -27,6 +32,11 @@ String errorMessage(UriCheckError e) {
     case UriCheckError.invalidFunction:
       return 'Unsupported Function';
   }
+}
+
+String filltag(String tag) {
+  List<String> tags = [tag.substring(4*0,4*1),tag.substring(4*1,4*2),tag.substring(4*2,4*3),tag.substring(4*3,4*4)];
+  return '${tags[0]} - ${tags[1]} - ${tags[2]} - ${tags[3]}';
 }
 
 UriCheckError? validateRawUri(String uri) {
@@ -60,7 +70,7 @@ UriCheckError? validateRawUri(String uri) {
 }
 
 bool isValid18Decimals(BigInt amount) {
-  final base = BigInt.from(10).pow(18);
+  final base = BigInt.from(10).pow(JPYCDecimal);
   return amount % base == BigInt.zero;
 }
 
@@ -136,6 +146,7 @@ class Erc681Request {
     required this.amount,
     required this.tag
   });
+
 }
 
 Erc681Request parseErc681(String uri) {
@@ -196,4 +207,101 @@ String ShowAmount(BigInt Amount, {int Div = 18}){
   if (integer.isEmpty) integer = '0';
 
   return decimal.isEmpty ? integer : '$integer.$decimal';
+}
+
+
+
+void Convert(String inputHex, Class_index index){
+  // 138文字目（インデックスだと138）から、パディング(0000)の手前までを切り出す
+  String hexAddress = inputHex.substring(10, 74); // 64文字分（32バイト分）
+  print(hexAddress);
+  String address = "0x" + hexAddress.substring(24);
+  print("抽出されたアドレス: $address");
+  index.Address = address;
+
+  String hexAmount = inputHex.substring(74, 74 + 64); // 64文字分（32バイト分）
+  print(hexAmount);
+  BigInt amount = hexToInt(hexAmount);
+  BigInt decimals = BigInt.from(10).pow(JPYCDecimal);
+  final BigInt amountWei = BigInt.from(amount / decimals);
+  print("抽出された量: $amountWei");
+  index.Amount = amountWei.toString();
+
+  if(inputHex.length >138){
+    String hexMarker = inputHex.substring(138, 138 + 32); // 32文字分（16バイト分）
+    print(hexMarker);
+    try{
+      String invoiceID = utf8.decode(hexToBytes("0x" +hexMarker));
+      print("抽出された管理番号: $invoiceID");
+      index.tag = invoiceID;
+    }catch(e){
+      index.tag = "No TAG";
+    }
+  }else{
+    index.tag = "No TAG";
+  }
+  index.isConvert = true;
+  index.Status = "Completed.";
+}
+
+Future<String?> getInputDataDirectly(String txHash) async {
+  final rpcUrl = "https://polygon.drpc.org"; // または別のRPC URL
+
+  // 念のためハッシュを綺麗にする
+  final cleanHash = txHash.trim().startsWith('0x') ? txHash.trim() : '0x${txHash.trim()}';
+
+  try {
+    final response = await http.post(
+      Uri.parse(rpcUrl),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        "jsonrpc": "2.0",
+        "method": "eth_getTransactionByHash",
+        "params": [cleanHash],
+        "id": 1
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = jsonDecode(response.body);
+
+      if (data['result'] != null && data['result']['input'] != null) {
+        // ここで生（String型）の input データが確実に取れます！
+        String inputData = data['result']['input'];
+        return inputData; // "0xa9059cbb..."
+      }
+    }
+    print(response.statusCode);
+    return null;
+  } catch (e) {
+    print("RPC直叩きエラー: $e");
+    return null;
+  }
+}
+
+
+class Class_index{
+  late String Status ="";
+  late String hash = "";
+  late String Address ="";
+  late String Amount ="";
+  late String tag ="";
+  late bool isConvert = false;
+
+  Class_index();
+
+}
+
+class indexController{
+  final Class_index index;
+  // 各行専用のコントローラーをクラス内に持たせる
+  final TextEditingController hashController;
+
+  indexController(String initialHash)
+      : index = new Class_index(),
+        hashController = TextEditingController(text: initialHash);
+
+  void dispose(){
+    hashController.dispose();
+  }
 }

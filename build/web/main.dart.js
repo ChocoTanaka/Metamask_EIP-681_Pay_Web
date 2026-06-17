@@ -52400,7 +52400,7 @@ this.aX()},
 ab3(){var s=null,r=B.b([new B.PV(new B.fy(A.eY,s,s,s,s,s,A.cw),B.bG("\u9805\u76ee",s,s,s,B.cJ(s,s,s,s,s,s,s,s,s,s,s,28,s,s,s,s,s,!0,s,s,s,s,s,s,s,s),s,s),s),B.aJh(B.Rl(A.TZ,s,36),new B.ah5(this),B.bG("Write",s,s,s,A.eB,s,s)),B.aJh(B.Rl(A.U_,s,36),new B.ah6(this),B.bG("Read",s,s,s,A.eB,s,s)),B.aJh(B.Rl(A.TU,s,36),new B.ah7(this),B.bG("Index",s,s,s,A.eB,s,s))],t.o),q=B.ax([null,0],t.LO,t.S)
 return new B.PR(new B.xJ(new B.arJ(!0,!0,!0,r,q),new B.b1(5,5,5,5),A.bl,!1,s,s,A.O0,!1,s,s,4,A.aU,s,s,A.aA,A.bq,s),s)},
 R(a){var s=this,r=null,q=B.bG(["Metamask JPYC Sub-Payment System WriteQR","Metamask JPYC Sub-Payment System ReadQR","Metamask JPYC Sub-Payment System Index"][s.d],r,r,r,r,r,r),p=s.ab3()
-return new B.GF(new B.Bu(q,A.eY,new B.a1I(r,r,1/0,56),r),new B.E_(B.l7(r,[new B.Fc(r),new B.Fb(r),new B.Fd(r)][s.d],A.ag,r,r,r,r,700,r,r,r,r,1200),!1,1,0.1,r),new B.jP($.h9().a,new B.ahb(s),r,r,t.x_),p,!0,r)}}
+return new B.GF(new B.Bu(q,A.eY,new B.a1I(r,r,1/0,56),r),new B.E_(B.l7(r,[new B.Fc(r),new B.Fb(r),new B.Fd(r)][s.d],A.ag,r,r,r,r,700,r,r,r,r,1000),!1,1,0.1,r),new B.jP($.h9().a,new B.ahb(s),r,r,t.x_),p,!0,r)}}
 B.ah9.prototype={
 $0(){this.a.d=this.b},
 $S:0}

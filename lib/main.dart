@@ -167,7 +167,7 @@ class MPSs_Home extends State<MPSs_Stateful>{
           maxScale: 1.0,      // 最大拡大倍率
             child: Container(
               // ここでPC基準のサイズ（キャンバスの大きさ）を完全に固定する
-              width: 1200,
+              width: 1000,
               height: 700,
               child: _screens[_selectedIndex],
             )

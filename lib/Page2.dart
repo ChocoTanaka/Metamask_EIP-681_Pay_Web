@@ -195,6 +195,7 @@ class _MPSsState_Write extends State<Page2> {
                                         ),
                                       ),
                                     ),
+                                    const SizedBox(width: 30),
                                     DropdownButton<String>(
                                       value: s_isCompany,
                                       items: [

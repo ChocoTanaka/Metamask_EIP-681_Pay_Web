@@ -161,7 +161,17 @@ class MPSs_Home extends State<MPSs_Stateful>{
           backgroundColor: Colors.deepPurple[200],
         ),
         drawer: MyDrawer(),
-        body:_screens[_selectedIndex],
+        body:InteractiveViewer(
+          constrained: false,
+          minScale: 0.1,      // 最小縮小倍率（ピンチインで全体を見渡せるようにする）
+          maxScale: 1.0,      // 最大拡大倍率
+            child: Container(
+              // ここでPC基準のサイズ（キャンバスの大きさ）を完全に固定する
+              width: 1200,
+              height: 700,
+              child: _screens[_selectedIndex],
+            )
+        ),
 
         floatingActionButton: ValueListenableBuilder(
             valueListenable: Appkit().addressNotifier,

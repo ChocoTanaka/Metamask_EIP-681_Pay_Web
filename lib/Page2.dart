@@ -7,9 +7,8 @@ import 'PDF.dart';
 
 
 class Page2 extends StatefulWidget {
-  const Page2({super.key, required this.title});
+  const Page2({super.key});
 
-  final String title;
 
   @override
   State<Page2> createState() => _MPSsState_Write();
@@ -31,6 +30,8 @@ class _MPSsState_Write extends State<Page2> {
   bool isShow = false;
   bool isTag = false;
   bool isCompany = false;
+
+  final ScrollController _scrollController_L = ScrollController();
 
   late String s_isCompany = isCompany ? "　　様" : "　　御中";
 
@@ -54,76 +55,82 @@ class _MPSsState_Write extends State<Page2> {
       children: <Widget>[
         Expanded(
           flex: 9,
-          child: Column(
-            children: [
-              Text(
-                '支払用紙',
-                style: const TextStyle(fontSize: 36),
-              ),
-              const SizedBox(height: 20),
-              Row(
-                children: <Widget>[
-                  Text(
-                    tag_name_s,
-                    style: const TextStyle(fontSize: 28),
-                  ),
-                  const SizedBox(height: 20),
-                  Text(
-                    '　$s_isCompany',
-                    style: const TextStyle(fontSize: 28),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              Row(
-                children: <Widget>[
-                  Text(
-                    '請求額：',
-                    style: const TextStyle(fontSize: 28),
-                  ),
-                  const SizedBox(height: 20),
-                  Row(
-                    children: <Widget>[
+          child: Scrollbar(
+            controller: _scrollController_L,
+              child: SingleChildScrollView(
+                controller: _scrollController_L,
+                  child: Column(
+                    children: [
                       Text(
-                        amount.toString(),
-                        style: const TextStyle(fontSize: 28),
+                        '支払用紙',
+                        style: const TextStyle(fontSize: 36),
                       ),
-                      const SizedBox(height: 10),
-                      Text(
-                        '　JPYC',
-                        style: const TextStyle(fontSize: 28),
+                      const SizedBox(height: 20),
+                      Row(
+                        children: <Widget>[
+                          Text(
+                            tag_name_s,
+                            style: const TextStyle(fontSize: 28),
+                          ),
+                          const SizedBox(height: 20),
+                          Text(
+                            '　$s_isCompany',
+                            style: const TextStyle(fontSize: 28),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                      Row(
+                        children: <Widget>[
+                          Text(
+                            '請求額：',
+                            style: const TextStyle(fontSize: 28),
+                          ),
+                          const SizedBox(height: 20),
+                          Row(
+                            children: <Widget>[
+                              Text(
+                                amount.toString(),
+                                style: const TextStyle(fontSize: 28),
+                              ),
+                              const SizedBox(height: 10),
+                              Text(
+                                '　JPYC',
+                                style: const TextStyle(fontSize: 28),
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                      Row(
+                        children: <Widget>[
+                          Text(
+                            '請求書番号：',
+                            style: const TextStyle(fontSize: 28),
+                          ),
+                          const SizedBox(height: 20),
+                          Text(
+                            '${tag1_s} - ${tag2_s} - ${tag3_s} - ${tag4_s}',
+                            style: const TextStyle(fontSize: 28),
+                          )
+                        ],
+                      ),
+                      const SizedBox(height: 30),
+                      Container(
+                        width: 300,
+                        height: 300,
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.black, width: 2), // 黒い枠線
+                        ),
+                        child: QrImageView(
+                          data: generatedUri!,
+                          size: 250,
+                        ),
                       ),
                     ],
                   )
-                ],
               ),
-              const SizedBox(height: 20),
-              Row(
-                children: <Widget>[
-                  Text(
-                    '請求書番号：',
-                    style: const TextStyle(fontSize: 28),
-                  ),
-                  const SizedBox(height: 20),
-                  Text(
-                    '${tag1_s} - ${tag2_s} - ${tag3_s} - ${tag4_s}',
-                    style: const TextStyle(fontSize: 28),
-                  )
-                ],
-              ),
-              const SizedBox(height: 30),
-              Container(
-                width: 300,
-                height: 300,
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.black, width: 2), // 黒い枠線
-                ),
-                child: QrImageView(
-                  data: generatedUri!,
-                  size: 250,
-                ),
-              ),
-            ],
           )
         ),
         Expanded(
@@ -377,6 +384,12 @@ class _MPSsState_Write extends State<Page2> {
           width: 300,
           height:75,
           child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(0),
+                ),
+                backgroundColor: (Appkit().userAddress !="" && amount >0) ? Colors.blue[200] : Colors.grey,
+              ),
               onPressed:() {
                 if(Appkit().userAddress != "" &&
                     amount !=0
@@ -408,27 +421,18 @@ class _MPSsState_Write extends State<Page2> {
   @override
   Widget build(BuildContext context) {
 
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-
-        title: Text(widget.title),
-      ),
-      body: Center(
-          child:Row(
-            children: <Widget>[
-              Expanded(
-                flex: 1,
-                child: isShow == false ? const SizedBox.shrink() : Left_View()
-              ),
-              Expanded(
-                flex: 1,
-                child:Right_View()
-              ),
-            ],
+    return Center(
+      child:Row(
+        children: <Widget>[
+          Expanded(
+              flex: 1,
+              child: isShow == false ? const SizedBox.shrink() : Left_View()
           ),
+          Expanded(
+              flex: 1,
+              child:Right_View()
+          ),
+        ],
       ),
     );
   }

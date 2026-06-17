@@ -10,9 +10,8 @@ import 'dart:js_interop';
 external JSPromise<JSString?> _sendTransactionJS(JSAny tx);
 
 class Page1 extends StatefulWidget {
-  const Page1({super.key, required this.title});
+  const Page1({super.key});
 
-  final String title;
 
   @override
   State<Page1> createState() => _MPSsState_Read();
@@ -222,68 +221,60 @@ class _MPSsState_Read extends State<Page1> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-
-        title: Text(widget.title),
-      ),
-      body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              Text(
-                "Read ERC-681 Recipt",
-                style: TextStyle(
-                  fontSize: 24.0,
-                ),
+    return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: <Widget>[
+            Text(
+              "Read ERC-681 Recipt",
+              style: TextStyle(
+                fontSize: 24.0,
               ),
-              Text(
-                Text_Error,
-                style: TextStyle(
-                    fontSize: 22.0,
-                    color: Colors.greenAccent[200]
-                ),
+            ),
+            Text(
+              Text_Error,
+              style: TextStyle(
+                  fontSize: 22.0,
+                  color: Colors.greenAccent[200]
               ),
-              Camera_Viewer(),
-              URI.isNotEmpty ?
-              ElevatedButton(
-                  onPressed: () async {
-                    if(URI.isNotEmpty && Appkit().userAddress !=""){
+            ),
+            Camera_Viewer(),
+            URI.isNotEmpty ?
+            ElevatedButton(
+                onPressed: () async {
+                  if(URI.isNotEmpty && Appkit().userAddress !=""){
+                    setState(() {
+                      Text_Error = "";
+                      Read_Text = "Check Phase...";
+                    });
+                    final Tx = parseErc681(URI);
+                    URI = "";
+                    CheckTx(context,Tx).then((result) async{
+                      await Future.delayed(const Duration(milliseconds: 1500));
                       setState(() {
-                        Text_Error = "";
-                        Read_Text = "Check Phase...";
+                        i_situ = 0;
+                        Read_Text = "";
                       });
-                      final Tx = parseErc681(URI);
-                      URI = "";
-                      CheckTx(context,Tx).then((result) async{
-                        await Future.delayed(const Duration(milliseconds: 1500));
-                        setState(() {
-                          i_situ = 0;
-                          Read_Text = "";
-                        });
-                      });
-                    }
-                  },
-                  child: Text(
-                    "Check",
-                    style: TextStyle(
-                      fontSize: 24.0,
-                    ),
+                    });
+                  }
+                },
+                child: Text(
+                  "Check",
+                  style: TextStyle(
+                    fontSize: 24.0,
                   ),
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: (URI.isNotEmpty && Appkit().userAddress !="") ? Colors.deepPurple[200] : Colors.grey
-                  )
-              )
-                  :
-              const Padding(padding: EdgeInsets.all(10)),
-            ],
-          )
-      ),
+                ),
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: (URI.isNotEmpty && Appkit().userAddress !="") ? Colors.deepPurple[200] : Colors.grey
+                )
+            )
+                :
+            const Padding(padding: EdgeInsets.all(10)),
+          ],
+        )
     );
   }
+
 
   SizedBox Camera_Viewer(){
     switch(i_situ){

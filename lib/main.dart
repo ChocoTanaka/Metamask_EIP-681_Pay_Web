@@ -26,17 +26,15 @@ class MPSs extends StatelessWidget {
         fontFamily: "Noto Sans JP",
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const MPSs_Stateful(title: 'MetaMask Payment Sub-system'),
+      home: const MPSs_Stateful(),
     );
   }
 }
 
 
 class MPSs_Stateful extends StatefulWidget {
-  const MPSs_Stateful({super.key, required this.title});
+  const MPSs_Stateful({super.key});
 
-
-  final String title;
 
   @override
   State<MPSs_Stateful> createState() => MPSs_Home();
@@ -99,36 +97,67 @@ class MPSs_Home extends State<MPSs_Stateful>{
     super.dispose();
   }
 
-  Widget build(BuildContext context) {
-
-
-    final _screens = [
-      Page2(title: 'Metamask JPYC Sub-Payment System WriteQR'),
-      Page1(title: 'Metamask JPYC Sub-Payment System ReadQR'),
-      Page3(title: 'Metamask JPYC Sub-Payment Index')
-    ];
-
-    return Scaffold(
-        resizeToAvoidBottomInset: false,
-        body:Row(
+  Widget MyDrawer(){
+    return Drawer(
+        child:ListView(
+          padding: EdgeInsetsGeometry.all(1.0),
           children: <Widget>[
-            NavigationRail(
-                destinations: [
-                  NavigationRailDestination(icon: Icon(Icons.qr_code_2,size: 42), label: Text('Write',style: const TextStyle(fontSize: 18))),
-                  NavigationRailDestination(icon: Icon(Icons.attach_money_outlined,size: 42),label: Text('Read',style: const TextStyle(fontSize: 18))),
-                  NavigationRailDestination(icon: Icon(Icons.book,size: 42),label: Text('Index',style: const TextStyle(fontSize: 18))),
-                ],
-                labelType: NavigationRailLabelType.all,
-                selectedIndex: _selectedIndex,
-                onDestinationSelected: _onItemTapped,
-                useIndicator: true,
+            DrawerHeader(
+              decoration: BoxDecoration(color: Colors.deepPurple[200]),
+              child: Text(
+                "項目",
+                style: TextStyle(
+                    fontSize: 32
+                ),
+              ),
             ),
-            Expanded(
-              child: _screens[_selectedIndex]
+            ListTile(
+              onTap: () {
+                _onItemTapped(0);
+              },
+              leading: Icon(Icons.qr_code_2,size: 36),
+              title: Text('Write',style: const TextStyle(fontSize: 24)),
+            ),
+            ListTile(
+              onTap: () {
+                _onItemTapped(1);
+              },
+              leading: Icon(Icons.attach_money_outlined,size: 36),
+              title: Text('Read',style: const TextStyle(fontSize: 24)),
+            ),
+            ListTile(
+              onTap: () {
+                _onItemTapped(1);
+              },
+              leading: Icon(Icons.book,size: 36),
+              title: Text('Index',style: const TextStyle(fontSize: 24)),
             ),
           ],
-        ),
+        )
+    );
+  }
 
+  Widget build(BuildContext context) {
+    final _screens = [
+      Page2(),
+      Page1(),
+      Page3()
+    ];
+
+    // 各画面のタイトルのリスト
+    final List<String> _titles = [
+      'Metamask JPYC Sub-Payment System WriteQR',
+      'Metamask JPYC Sub-Payment System ReadQR',
+      'Metamask JPYC Sub-Payment System Index'
+    ];
+    return Scaffold(
+        resizeToAvoidBottomInset: false,
+        appBar: AppBar(
+          title: Text(_titles[_selectedIndex]), // 親のAppBarのタイトルを動的に変える
+          backgroundColor: Colors.deepPurple[200],
+        ),
+        drawer: MyDrawer(),
+        body:_screens[_selectedIndex],
         floatingActionButton: ValueListenableBuilder(
             valueListenable: Appkit().addressNotifier,
             builder: (context, address, _){

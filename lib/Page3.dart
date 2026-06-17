@@ -3,9 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class Page3 extends StatefulWidget {
-  const Page3({super.key, required this.title});
-
-  final String title;
+  const Page3({super.key});
 
   @override
   State<Page3> createState() => _MPSsState_Index();
@@ -228,27 +226,18 @@ class _MPSsState_Index extends State<Page3> {
   @override
   Widget build(BuildContext context) {
 
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child:Row(
-          children: <Widget>[
-            Expanded(
-                flex: 3,
-                child: isShow == false ? const SizedBox.shrink() : Left_View()
-            ),
-            Expanded(
-                flex: 2,
-                child:Right_View()
-            ),
-          ],
-        ),
+    return Center(
+      child:Row(
+        children: <Widget>[
+          Expanded(
+              flex: 3,
+              child: isShow == false ? const SizedBox.shrink() : Left_View()
+          ),
+          Expanded(
+              flex: 2,
+              child:Right_View()
+          ),
+        ],
       ),
     );
   }

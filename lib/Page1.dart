@@ -280,8 +280,8 @@ class _MPSsState_Read extends State<Page1> {
     switch(i_situ){
       case 0:
         return SizedBox(
-            height:500,
-            width:500,
+            height:400,
+            width:400,
             child: Center(
                 child:ElevatedButton(
                   style: ElevatedButton.styleFrom(
@@ -305,8 +305,8 @@ class _MPSsState_Read extends State<Page1> {
         );
       case 1:
         return SizedBox(
-          height:500,
-          width:500,
+          height:400,
+          width:400,
           child: MobileScanner(
             controller: _controller, // ここで指定
             onDetect: (capture) async {
@@ -371,8 +371,8 @@ class _MPSsState_Read extends State<Page1> {
         );
       case 2:
         return SizedBox(
-            height:500,
-            width:500,
+            height:400,
+            width:400,
             child: Center(
               child:Text(
                 Read_Text,
@@ -384,8 +384,8 @@ class _MPSsState_Read extends State<Page1> {
         );
       default:
         return SizedBox(
-            height:500,
-            width:500,
+            height:400,
+            width:400,
             child: Center(
                 child:ElevatedButton(
                   style: ElevatedButton.styleFrom(

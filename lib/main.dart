@@ -146,9 +146,9 @@ class MPSs_Home extends State<MPSs_Stateful>{
 
     // 各画面のタイトルのリスト
     final List<String> _titles = [
-      'Metamask JPYC Sub-Payment System WriteQR',
-      'Metamask JPYC Sub-Payment System ReadQR',
-      'Metamask JPYC Sub-Payment System Index'
+      'WriteQR Metamask JPYC Sub-Payment System',
+      'ReadQR Metamask JPYC Sub-Payment System',
+      'Index Metamask JPYC Sub-Payment System'
     ];
 
     const double targetWidth = 1200.0; // 固定したいPCの横幅
@@ -161,18 +161,22 @@ class MPSs_Home extends State<MPSs_Stateful>{
           backgroundColor: Colors.deepPurple[200],
         ),
         drawer: MyDrawer(),
-        body:InteractiveViewer(
-          constrained: false,
-          minScale: 0.1,      // 最小縮小倍率（ピンチインで全体を見渡せるようにする）
-          maxScale: 1.0,      // 最大拡大倍率
-            child: Container(
+        backgroundColor: Colors.grey[300],
+        body:Center(
+          child: InteractiveViewer(
+              alignment: Alignment.center,
+              constrained: false,
+              minScale: 0.5,      // 最小縮小倍率（ピンチインで全体を見渡せるようにする）
+              maxScale: 1.0,      // 最大拡大倍率
+              child: Container(
               // ここでPC基準のサイズ（キャンバスの大きさ）を完全に固定する
-              width: 1000,
+              width: 1200,
               height: 700,
+              color: Colors.white,
               child: _screens[_selectedIndex],
-            )
+            ),
+          ),
         ),
-
         floatingActionButton: ValueListenableBuilder(
             valueListenable: Appkit().addressNotifier,
             builder: (context, address, _){

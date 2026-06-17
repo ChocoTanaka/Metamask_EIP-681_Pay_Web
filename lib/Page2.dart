@@ -29,11 +29,10 @@ class _MPSsState_Write extends State<Page2> {
   int amount = 0;
   bool isShow = false;
   bool isTag = false;
-  bool isCompany = false;
 
   final ScrollController _scrollController_L = ScrollController();
 
-  late String s_isCompany = isCompany ? "　　様" : "　　御中";
+  late String s_isCompany = "様";
 
   String URI(BigInt Wei, String tag){
     String uri = 'ethereum:$JPYCAddress@137/transfer?address=${Appkit().userAddress}&uint256=$Wei';
@@ -59,6 +58,7 @@ class _MPSsState_Write extends State<Page2> {
             controller: _scrollController_L,
               child: SingleChildScrollView(
                 controller: _scrollController_L,
+                  scrollDirection: Axis.horizontal,
                   child: Column(
                     children: [
                       Text(
@@ -115,18 +115,6 @@ class _MPSsState_Write extends State<Page2> {
                             style: const TextStyle(fontSize: 28),
                           )
                         ],
-                      ),
-                      const SizedBox(height: 30),
-                      Container(
-                        width: 300,
-                        height: 300,
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black, width: 2), // 黒い枠線
-                        ),
-                        child: QrImageView(
-                          data: generatedUri!,
-                          size: 250,
-                        ),
                       ),
                     ],
                   )
@@ -190,14 +178,6 @@ class _MPSsState_Write extends State<Page2> {
                             Flexible(
                                 child: Row(
                                   children: [
-                                    Switch(
-                                        value: isCompany,
-                                        onChanged: (bool val){
-                                          setState(() {
-                                            isCompany = val;
-                                          });
-                                        }
-                                    ),
                                     Text(
                                       "宛名:",
                                       style: const TextStyle(fontSize: 28),
@@ -215,9 +195,27 @@ class _MPSsState_Write extends State<Page2> {
                                         ),
                                       ),
                                     ),
-                                    Text(
-                                      "$s_isCompany",
-                                      style: const TextStyle(fontSize: 28),
+                                    DropdownButton<String>(
+                                      value: s_isCompany,
+                                      items: [
+                                        DropdownMenuItem(
+                                          child: Text('様',
+                                            style: const TextStyle(fontSize: 28),
+                                          ),
+                                          value: '様',
+                                        ),
+                                        DropdownMenuItem(
+                                          child: Text('御中',
+                                            style: const TextStyle(fontSize: 28),
+                                          ),
+                                          value: '御中',
+                                        ),
+                                      ],
+                                      onChanged: (value) {
+                                        setState(() {
+                                          s_isCompany = value!;
+                                        });
+                                      },
                                     ),
                                   ],
                                 )

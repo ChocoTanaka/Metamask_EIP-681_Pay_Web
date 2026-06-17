@@ -156,9 +156,12 @@ class MPSs_Home extends State<MPSs_Stateful>{
 
     return Scaffold(
         resizeToAvoidBottomInset: true,
-        appBar: AppBar(
-          title: Text(_titles[_selectedIndex]), // 親のAppBarのタイトルを動的に変える
-          backgroundColor: Colors.deepPurple[200],
+        appBar: PreferredSize(
+            preferredSize: Size.fromHeight(60.0),
+            child: AppBar(
+              title: Text(_titles[_selectedIndex]), // 親のAppBarのタイトルを動的に変える
+              backgroundColor: Colors.deepPurple[200],
+            ),
         ),
         drawer: MyDrawer(),
         backgroundColor: Colors.grey[300],
@@ -171,7 +174,7 @@ class MPSs_Home extends State<MPSs_Stateful>{
               child: Container(
               // ここでPC基準のサイズ（キャンバスの大きさ）を完全に固定する
               width: 1200,
-              height: 700,
+              height: 665,
               color: Colors.white,
               child: _screens[_selectedIndex],
             ),

@@ -67,28 +67,28 @@ class _MPSsState_Index extends State<Page3> {
         ),
         const SizedBox(height: 20),
         Expanded(
-            child: Scrollbar(
+          child: Scrollbar(
+            controller: _scrollController_R,
+            child: SingleChildScrollView(
               controller: _scrollController_R,
-              child: SingleChildScrollView(
-                controller: _scrollController_R,
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  itemCount: List_index.length,
-                  itemBuilder: (context, index) {
-                    return Table(
-                        children: [
-                          TableRow(
-                              children: [
-                                indexlist(index)
-                              ]
-                          )
-                        ]
-                    );
-                  },
-                ),
+              child: ListView.builder(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                itemCount: List_index.length,
+                itemBuilder: (context, index) {
+                  return Table(
+                      children: [
+                        TableRow(
+                            children: [
+                              indexlist(index)
+                            ]
+                        )
+                      ]
+                  );
+                },
               ),
             ),
+          ),
         ),
         const SizedBox(height: 20),
         ElevatedButton(
@@ -123,27 +123,27 @@ class _MPSsState_Index extends State<Page3> {
 
   Widget Left_View() {
     return Scrollbar(
-      controller: _scrollController_L,
-      child: SingleChildScrollView(
         controller: _scrollController_L,
-        child: ListView.separated(
-          shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
-          itemCount: List_index.length,
-          itemBuilder: (context, i) {
-            return Table(
-                children: [
-                  TableRow(
-                    children: [
-                      indexContainer(i, List_index[i])
-                    ]
-                )
-              ]
-            );
-          },
-          separatorBuilder: (context, index) => SizedBox(height: 16), // ここで間隔を指定
-        ),
-      )
+        child: SingleChildScrollView(
+          controller: _scrollController_L,
+          child: ListView.separated(
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            itemCount: List_index.length,
+            itemBuilder: (context, i) {
+              return Table(
+                  children: [
+                    TableRow(
+                        children: [
+                          indexContainer(i, List_index[i])
+                        ]
+                    )
+                  ]
+              );
+            },
+            separatorBuilder: (context, index) => SizedBox(height: 16), // ここで間隔を指定
+          ),
+        )
     );
   }
 
@@ -196,8 +196,8 @@ class _MPSsState_Index extends State<Page3> {
           const SizedBox(height: 20),
           Text(
             Index.index.tag.isNotEmpty && Index.index.tag.length == 16
-            ? "tag: ${filltag(Index.index.tag)}"
-            : "no tag or Undefined tag",
+                ? "tag: ${filltag(Index.index.tag)}"
+                : "no tag or Undefined tag",
             style: const TextStyle(fontSize: 24),
           ),
           const SizedBox(height: 20),

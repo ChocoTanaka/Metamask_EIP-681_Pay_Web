@@ -100,14 +100,14 @@ class MPSs_Home extends State<MPSs_Stateful>{
   Widget MyDrawer(){
     return Drawer(
         child:ListView(
-          padding: EdgeInsetsGeometry.all(1.0),
+          padding: EdgeInsetsGeometry.all(5.0),
           children: <Widget>[
             DrawerHeader(
               decoration: BoxDecoration(color: Colors.deepPurple[200]),
               child: Text(
                 "項目",
                 style: TextStyle(
-                    fontSize: 32
+                    fontSize: 28
                 ),
               ),
             ),
@@ -127,7 +127,7 @@ class MPSs_Home extends State<MPSs_Stateful>{
             ),
             ListTile(
               onTap: () {
-                _onItemTapped(1);
+                _onItemTapped(2);
               },
               leading: Icon(Icons.book,size: 36),
               title: Text('Index',style: const TextStyle(fontSize: 24)),
@@ -150,14 +150,19 @@ class MPSs_Home extends State<MPSs_Stateful>{
       'Metamask JPYC Sub-Payment System ReadQR',
       'Metamask JPYC Sub-Payment System Index'
     ];
+
+    const double targetWidth = 1200.0; // 固定したいPCの横幅
+
+
     return Scaffold(
-        resizeToAvoidBottomInset: false,
+        resizeToAvoidBottomInset: true,
         appBar: AppBar(
           title: Text(_titles[_selectedIndex]), // 親のAppBarのタイトルを動的に変える
           backgroundColor: Colors.deepPurple[200],
         ),
         drawer: MyDrawer(),
         body:_screens[_selectedIndex],
+
         floatingActionButton: ValueListenableBuilder(
             valueListenable: Appkit().addressNotifier,
             builder: (context, address, _){

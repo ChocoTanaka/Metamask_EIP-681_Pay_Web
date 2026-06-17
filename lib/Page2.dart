@@ -49,103 +49,93 @@ class _MPSsState_Write extends State<Page2> {
   }
 
   Widget Left_View(){
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Expanded(
-          flex: 9,
-          child: Scrollbar(
-            controller: _scrollController_L,
-              child: SingleChildScrollView(
-                controller: _scrollController_L,
-                  scrollDirection: Axis.horizontal,
-                  child: Column(
-                    children: [
+    return Scrollbar(
+      controller: _scrollController_L,
+      child: SingleChildScrollView(
+          controller: _scrollController_L,
+          scrollDirection: Axis.horizontal,
+          child: Column(
+            children: [
+              Text(
+                '支払用紙',
+                style: const TextStyle(fontSize: 36),
+              ),
+              const SizedBox(height: 20),
+              Row(
+                children: <Widget>[
+                  Text(
+                    tag_name_s,
+                    style: const TextStyle(fontSize: 28),
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    '　$s_isCompany',
+                    style: const TextStyle(fontSize: 28),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              Row(
+                children: <Widget>[
+                  Text(
+                    '請求額：',
+                    style: const TextStyle(fontSize: 28),
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    children: <Widget>[
                       Text(
-                        '支払用紙',
-                        style: const TextStyle(fontSize: 36),
+                        amount.toString(),
+                        style: const TextStyle(fontSize: 28),
                       ),
-                      const SizedBox(height: 20),
-                      Row(
-                        children: <Widget>[
-                          Text(
-                            tag_name_s,
-                            style: const TextStyle(fontSize: 28),
-                          ),
-                          const SizedBox(height: 20),
-                          Text(
-                            '　$s_isCompany',
-                            style: const TextStyle(fontSize: 28),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 20),
-                      Row(
-                        children: <Widget>[
-                          Text(
-                            '請求額：',
-                            style: const TextStyle(fontSize: 28),
-                          ),
-                          const SizedBox(height: 20),
-                          Row(
-                            children: <Widget>[
-                              Text(
-                                amount.toString(),
-                                style: const TextStyle(fontSize: 28),
-                              ),
-                              const SizedBox(height: 10),
-                              Text(
-                                '　JPYC',
-                                style: const TextStyle(fontSize: 28),
-                              ),
-                            ],
-                          )
-                        ],
-                      ),
-                      const SizedBox(height: 20),
-                      Row(
-                        children: <Widget>[
-                          Text(
-                            '請求書番号：',
-                            style: const TextStyle(fontSize: 28),
-                          ),
-                          const SizedBox(height: 20),
-                          Text(
-                            '${tag1_s} - ${tag2_s} - ${tag3_s} - ${tag4_s}',
-                            style: const TextStyle(fontSize: 28),
-                          )
-                        ],
+                      const SizedBox(height: 10),
+                      Text(
+                        '　JPYC',
+                        style: const TextStyle(fontSize: 28),
                       ),
                     ],
                   )
+                ],
               ),
-          )
-        ),
-        Expanded(
-          flex: 1,
-            child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(0),
+              const SizedBox(height: 20),
+              Row(
+                children: <Widget>[
+                  Text(
+                    '請求書番号：',
+                    style: const TextStyle(fontSize: 28),
                   ),
-                  backgroundColor: Colors.blue[200],
-                ),
-                onPressed:() async{
+                  const SizedBox(height: 20),
+                  Text(
+                    '${tag1_s} - ${tag2_s} - ${tag3_s} - ${tag4_s}',
+                    style: const TextStyle(fontSize: 28),
+                  )
+                ],
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(0),
+                    ),
+                    backgroundColor: Colors.blue[200],
+                  ),
+                  onPressed:() async{
                     makePdf(
-                      tag_name_s + s_isCompany,
-                      amount,
-                      tag1_s,tag2_s,tag3_s,tag4_s,
-                      generatedUri!,
-                      reciever
+                        tag_name_s + s_isCompany,
+                        amount,
+                        tag1_s,tag2_s,tag3_s,tag4_s,
+                        generatedUri!,
+                        reciever
                     );
                   },
-                child: Text(
-                  'PDFを発行する',
-                  style: const TextStyle(fontSize: 28),
-                )
-            )
-        ),
-      ],
+                  child: Text(
+                    'PDFを発行する',
+                    style: const TextStyle(fontSize: 28),
+                  )
+              )
+            ],
+          )
+      ),
     );
   }
 

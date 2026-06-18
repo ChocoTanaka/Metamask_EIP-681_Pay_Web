@@ -140,9 +140,14 @@ class _MPSsState_Read extends State<Page1> {
                   tag: tx_R.tag
               );
               String hash = "";
-              hash = await Appkit().RequestTx(tx);
+              if(kIsWeb){
+                // WebならJS Interop経由
+                hash = await requestSignatureJS(tx);
+              }else{
+                hash = await Appkit().RequestTx(tx);
+              }
               Navigator.pop(context);
-              if(hash.isNotEmpty){
+              if(hash.startsWith("Success")){
                 Check_Hash(context, "送金完了", hash);
               }
             },
@@ -152,8 +157,9 @@ class _MPSsState_Read extends State<Page1> {
     });
   }
 
-  void Check_Hash(BuildContext context, String title, String hash) {
+  void Check_Hash(BuildContext context, String title, String content) {
     showDialog(context: context, builder: (BuildContext context) {
+      String txHash = content.split(" : ")[1];
       return AlertDialog(
           title: Text(
               title,
@@ -175,7 +181,7 @@ class _MPSsState_Read extends State<Page1> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    hash,
+                    txHash,
                     style: TextStyle(
                       fontSize: 28,
                     ),
@@ -184,7 +190,7 @@ class _MPSsState_Read extends State<Page1> {
                   IconButton(
                     icon: const Icon(Icons.copy, size: 50),
                     onPressed: () {
-                      Clipboard.setData(ClipboardData(text: hash));
+                      Clipboard.setData(ClipboardData(text: txHash));
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text("Text Copied")),
                       );

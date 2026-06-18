@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:js_interop' as js;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'reown.dart';
@@ -6,6 +7,9 @@ import 'Page1.dart';
 import 'Page2.dart';
 import 'Page3.dart';
 
+// JSの関数を定義
+@js.JS('connectMetaMask')
+external js.JSPromise<js.JSString?> _connectMetaMask();
 
 void main() {
   runApp(const MPSs());
@@ -48,9 +52,6 @@ class MPSs_Home extends State<MPSs_Stateful>{
   @override
   initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Appkit().appKitInit(context);
-    });
     Appkit().addressNotifier.addListener(_handleAppKitUpdate);
   }
 
@@ -64,9 +65,29 @@ class MPSs_Home extends State<MPSs_Stateful>{
     }
   }
 
+  Future<void> connectWeb3() async {
+    try {
+      // JSの関数を呼び出し（PromiseをawaitするためにtoDartを使用）
+      final js.JSString? result = await _connectMetaMask().toDart;
+
+      if (result != null) {
+        final String address = result.toDart;
+        if (address == "NOT_INSTALLED") {
+          print("MetaMaskが見つかりません");
+        } else {
+          Appkit().addressNotifier.value = address;
+        }
+      }
+    } catch (e) {
+      print("JS Interop Error: $e");
+    }
+  }
+
   @override
   void dispose() {
-    Appkit().Disconnect();
+    if(!kIsWeb && (Platform.isAndroid || Platform.isIOS)){
+      Appkit().Disconnect();
+    }
     Appkit().addressNotifier.removeListener(_handleAppKitUpdate); // メモリリーク防止
     super.dispose();
   }
@@ -164,16 +185,8 @@ class MPSs_Home extends State<MPSs_Stateful>{
               return FloatingActionButton(
                 isExtended: true,
                 onPressed: () async{
-                  if(Appkit().userAddress.isEmpty){
-                    print(Appkit().appKitModal?.session);
-                    // Androidなどは従来通り
-                    Appkit().Openview();
-                  }else{
-                    Appkit().Disconnect();
-                    setState(() {
-                      Appkit().addressNotifier.value = "";
-                    });
-                  }
+                  await connectWeb3(); // これだけで MetaMask が起動し、userAddress に値が入る
+                  print('Connected Address: ${Appkit().userAddress}');
                 },
                 child: const Icon(Icons.cable,size: 36),
                 backgroundColor: Appkit().userAddress.isNotEmpty ? Colors.blue : Colors.grey[200],

@@ -11,6 +11,20 @@ String maskMiddle(String text, {int head = 6, int tail = 6}) {
       text.substring(text.length - tail);
 }
 
+Map<String, RequiredNamespace> r_Ns = {
+  'eip155': RequiredNamespace(
+    chains: ['eip155:137'], // eth,pol
+    methods: [
+      "eth_sendTransaction",
+      "eth_signTransaction",
+
+    ],
+    events: [
+      'accountsChanged',
+    ],
+  ),
+};
+
 class Appkit{
 // 1. クラス内部で自分自身の唯一のインスタンスを作る
   static final Appkit _instance = Appkit._internal();
@@ -33,21 +47,25 @@ class Appkit{
 
   Set<String> supportedWalletIds = <String>{
     'c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96', // MetaMask ID
+    '38f5d18bd8522c244bdd70cb4a68e0e718865155811c043f052fb9f1c51de662', //bitget
+    '5d9f1395b3a8e848684848dc4147cbd05c8d54bb737eac78fe103901fe6b01a1' //okx
+    'fd20dc426fb37566d803205b19bbc1d4096b248ac04548e3cfb6b3a38bd033aa', //　base
   };
+
 
   Future appKitInit(BuildContext context) async {
 
     final appKit = await ReownAppKit.createInstance(
       projectId: const String.fromEnvironment("ProjectId"),
-
+      relayUrl: 'wss://relay.walletconnect.com',
       metadata: const PairingMetadata(
-        name: "JPYC Invoice App",
-        description: "Generate EIP-681",
+        name: "Metamask JPYC Sub-Payment System",
+        description: "Generate EIP-681 recipt.",
         url: "https://github.com/ChocoTanaka/Metamask_EIP-681_Pay_Web",
-        icons: ['https://chocotanaka.github.io/Metamask_EIP-681_Pay_Web/assets/images/JPYCPay_512.png'],
+        icons: ['https://raw.githubusercontent.com/ChocoTanaka/Metamask_EIP-681_Pay_Web/master/JPYCPay_512.png'],
         redirect: Redirect(
-          //delete native
-          universal: 'https://chocotanaka.github.io/Metamask_EIP-681_Pay_Web/'
+            native: 'jpycinvoice://wc',
+            linkMode: true
         ),
       ),
     );
@@ -55,7 +73,7 @@ class Appkit{
     appKitModal = ReownAppKitModal(
       context: context,
       appKit: appKit,
-      includedWalletIds: supportedWalletIds,
+      optionalNamespaces: r_Ns,
       featuredWalletIds: supportedWalletIds,
     );
 

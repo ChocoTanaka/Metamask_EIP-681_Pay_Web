@@ -60,12 +60,12 @@ class Appkit{
       relayUrl: 'wss://relay.walletconnect.com',
       metadata: const PairingMetadata(
         name: "Metamask JPYC Sub-Payment System",
-        description: "Generate EIP-681 recipt.",
+        description: "Generate EIP-681 receipt.",
         url: "https://github.com/ChocoTanaka/Metamask_EIP-681_Pay_Web",
         icons: ['https://raw.githubusercontent.com/ChocoTanaka/Metamask_EIP-681_Pay_Web/master/JPYCPay_512.png'],
         redirect: Redirect(
-            native: 'jpycinvoice://wc',
-            linkMode: true
+          universal: 'https://chocotanaka.github.io/Metamask_EIP-681_Pay_Web/', // 💡 Universal Linkが理想
+          linkMode: true,
         ),
       ),
     );

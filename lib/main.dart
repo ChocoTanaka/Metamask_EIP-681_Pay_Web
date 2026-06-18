@@ -165,20 +165,24 @@ class MPSs_Home extends State<MPSs_Stateful>{
         ),
         drawer: MyDrawer(),
         backgroundColor: Colors.grey[300],
-        body:Center(
-          child: InteractiveViewer(
-              alignment: Alignment.center,
-              constrained: false,
-              minScale: 0.5,      // 最小縮小倍率（ピンチインで全体を見渡せるようにする）
-              maxScale: 1.0,      // 最大拡大倍率
-              child: Container(
-              // ここでPC基準のサイズ（キャンバスの大きさ）を完全に固定する
-              width: 1200,
-              height: 665,
-              color: Colors.white,
-              child: _screens[_selectedIndex],
-            ),
-          ),
+        body: LayoutBuilder(
+          builder: (context, constraints) {
+            return   Center(
+              child: InteractiveViewer(
+                alignment: Alignment.center,
+                constrained: false,
+                minScale: 0.5,      // 最小縮小倍率（ピンチインで全体を見渡せるようにする）
+                maxScale: 1.0,      // 最大拡大倍率
+                child: Container(
+                  // ここでPC基準のサイズ（キャンバスの大きさ）を完全に固定する
+                  width: constraints.maxWidth >= 1000 ? constraints.maxWidth : 1000,
+                  height: constraints.maxHeight,
+                  color: Colors.white,
+                  child: _screens[_selectedIndex],
+                ),
+              ),
+            );
+          }
         ),
         floatingActionButton: ValueListenableBuilder(
             valueListenable: Appkit().addressNotifier,

@@ -131,6 +131,7 @@
       const config = wagmiAdapterInstance.wagmiConfig;
 
       const txHash = await sendTransaction(config, {
+        chainId: 137,
         to: tx.to,
         data: tx.data,
         value: tx.value,

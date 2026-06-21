@@ -163,6 +163,7 @@ class _MPSsState_Read extends State<Page1> {
                     style: TextStyle(
                       fontSize: 28,
                     ),
+                    overflow: TextOverflow.ellipsis, // 長いテキストを省略
                   ),
                   const SizedBox(height: 40),
                   IconButton(

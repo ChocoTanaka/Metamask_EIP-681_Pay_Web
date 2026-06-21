@@ -1,15 +1,24 @@
+import 'dart:async';
 import 'dart:io';
-import 'dart:js_interop' as js;
+import 'dart:js_interop';
+import 'dart:js_interop_unsafe';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'reown.dart';
 import 'Page1.dart';
 import 'Page2.dart';
 import 'Page3.dart';
+import 'package:web/web.dart' as web;
 
+// index.htmlの window.initReownApp をDartの関数として定義
+@JS('initReownApp')
+external void jsInitReownApp(JSString projectId);
 // JSの関数を定義
-@js.JS('connectMetaMask')
-external js.JSPromise<js.JSString?> _connectMetaMask();
+@JS('connectMetaMask')
+external JSPromise<JSString?> jsConnectMetaMask();
+// 💡 window.getWalletAddress を定義
+@JS('getWalletAddress')
+external JSString? jsGetWalletAddress();
 
 void main() {
   runApp(const MPSs());
@@ -52,7 +61,25 @@ class MPSs_Home extends State<MPSs_Stateful>{
   @override
   initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _waitForJsAndInit();
+    });
     Appkit().addressNotifier.addListener(_handleAppKitUpdate);
+  }
+
+  void _waitForJsAndInit() {
+    // 💡 window 直下に 'initReownApp' というプロパティ（関数）が生えたかチェック
+    final bool isJsReady = web.window.hasProperty('initReownApp'.toJS).toDart;
+
+    if (isJsReady) {
+      jsInitReownApp(const String.fromEnvironment("ProjectId").toJS);
+    } else {
+      // ② まだなら、JS側がロード完了したタイミング（イベント）を検知して実行する
+      web.window.addEventListener('reown_script_ready', (web.Event event) {
+        jsInitReownApp(const String.fromEnvironment("ProjectId").toJS);
+      }.toJS);
+      print("ready");
+    }
   }
 
   // 通知が来たら呼ばれる関数
@@ -65,29 +92,88 @@ class MPSs_Home extends State<MPSs_Stateful>{
     }
   }
 
-  Future<void> connectWeb3() async {
+  // 接続ボタンが押された時の非同期ロジック
+  Future<void> onConnectPressed() async {
     try {
-      // JSの関数を呼び出し（PromiseをawaitするためにtoDartを使用）
-      final js.JSString? result = await _connectMetaMask().toDart;
+      // 💡 準備ができていなければ自動で待機し、準備ができ次第モーダルが開いて結果が返る
+      final String? result = await connectWeb3();
 
-      if (result != null) {
-        final String address = result.toDart;
-        if (address == "NOT_INSTALLED") {
-          print("MetaMaskが見つかりません");
-        } else {
-          Appkit().addressNotifier.value = address;
-        }
+      if (result == "OPENED") {
+        print("モーダルが正常に開きました。ユーザーのウォレット操作を待っています...");
+      } else {
+        print("モーダルの起動に失敗、またはキャンセルされました。");
       }
     } catch (e) {
-      print("JS Interop Error: $e");
+      print("ウォレット接続処理中にエラーが発生しました: $e");
     }
   }
 
+  Future<String?> connectWeb3() async {
+    final completer = Completer<String?>();
+    // ① すでにJS側の関数（connectMetaMask）が存在するかチェック
+    final bool isFnReady = web.window
+        .hasProperty('connectMetaMask'.toJS)
+        .toDart;
+    if (isFnReady) {
+      try {
+        // JSの関数を呼び出し（PromiseをawaitするためにtoDartを使用）
+        final JSString? result = await jsConnectMetaMask().toDart;
+
+        if (result != null) {
+          // JavaScriptからアドレスを取得
+          final JSString? jsAddress = jsGetWalletAddress();
+
+          if (jsAddress != null) {
+            final String address = jsAddress.toDart;
+            print("現在のウォレットアドレスを取得しました: $address");
+
+            if (address == "NOT_INSTALLED") {
+              print("MetaMaskが見つかりません");
+            } else {
+              Appkit().addressNotifier.value = address;
+            }
+          }
+        }
+      } catch (e) {
+        print("JS Interop Error: $e");
+      }
+    } else {
+      print("⏳ JS版の接続関数がまだ未定義のため、ロードを待機します...");
+
+      // ② まだ準備ができていなければ、100msごとに監視して生えてきた瞬間に実行する
+      Timer.periodic(const Duration(milliseconds: 500), (timer) async {
+        final bool isNowReady = web.window
+            .hasProperty('connectMetaMask'.toJS)
+            .toDart;
+        if (isNowReady) {
+          timer.cancel(); // 監視をストップ
+          print("ready");
+          try {
+            // JSの関数を呼び出し（PromiseをawaitするためにtoDartを使用）
+            final JSString? result = await jsConnectMetaMask().toDart;
+
+            if (result != null) {
+              final String address = result.toDart;
+              completer.complete(result.toDart);
+              if (address == "NOT_INSTALLED") {
+                print("MetaMaskが見つかりません");
+              } else {
+                Appkit().addressNotifier.value = address;
+              }
+            }
+          } catch (e) {
+            print("JS Interop Error: $e");
+          }
+        }
+      });
+    }
+    return completer.future;
+  }
+
+
+
   @override
   void dispose() {
-    if(!kIsWeb && (Platform.isAndroid || Platform.isIOS)){
-      Appkit().Disconnect();
-    }
     Appkit().addressNotifier.removeListener(_handleAppKitUpdate); // メモリリーク防止
     super.dispose();
   }
@@ -171,7 +257,7 @@ class MPSs_Home extends State<MPSs_Stateful>{
                 child: Container(
                   // ここでPC基準のサイズ（キャンバスの大きさ）を完全に固定する
                   width: constraints.maxWidth >= 1000 ? constraints.maxWidth : 1000,
-                  height: constraints.maxHeight,
+                  height: constraints.maxHeight >=700 ? constraints.maxHeight : 700,
                   color: Colors.white,
                   child: _screens[_selectedIndex],
                 ),
@@ -185,8 +271,10 @@ class MPSs_Home extends State<MPSs_Stateful>{
               return FloatingActionButton(
                 isExtended: true,
                 onPressed: () async{
-                  await connectWeb3(); // これだけで MetaMask が起動し、userAddress に値が入る
-                  print('Connected Address: ${Appkit().userAddress}');
+                  if(Appkit().userAddress.isEmpty){
+                    await onConnectPressed(); // これだけで MetaMask が起動し、userAddress に値が入る
+                    print('Connected Address: ${Appkit().userAddress}');
+                  }
                 },
                 child: const Icon(Icons.cable,size: 36),
                 backgroundColor: Appkit().userAddress.isNotEmpty ? Colors.blue : Colors.grey[200],

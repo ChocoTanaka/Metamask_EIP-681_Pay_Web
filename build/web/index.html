@@ -33,49 +33,135 @@
   <link rel="manifest" href="manifest.json">
 </head>
 <body>
-  <script src="flutter_bootstrap.js" async></script>
-  <script>
-    async function connectMetaMask() {
-      if (window.ethereum) {
-        // すでに接続済みかチェック（これを入れると安定します）
-        if (window.ethereum.selectedAddress) {
-          console.log("Already connected:", window.ethereum.selectedAddress);
-          return window.ethereum.selectedAddress;
-        }
+<script type="module" src="./js/reown-appkit.js"></script>
+<script>
+  let appKitInstance = null;
+  let wagmiAdapterInstance = null;
+  let currentDartCallback = null; // Dart側のコールバックを保持
 
-        const accounts = await window.ethereum.request({
-          method: 'eth_requestAccounts'
-        });
-
-        if (accounts && accounts.length > 0) {
-          console.log("New connection:", accounts[0]);
-          return accounts[0];
-        }
-        return null;
-      } else {
-        alert("Wallet not Selected");
-        return null;
-      }
+  // ① 初期化関数（Dartの各種チェックを挟みつつ呼ぶ）
+  window.initReownApp = function(projectId) {
+    // すでに初期化済みならスキップ（二重初期化防止）
+    if (appKitInstance) {
+      console.log("Reown AppKit is already initialized.");
+      return;
     }
 
-    async function sendTransactionJS(tx) {
-      if (typeof window.ethereum === 'undefined') return null;
-      try {
-    // Reownのrequestとほぼ同じ構造で叩けます
-        const finalTx = {
-          ...tx,
-          gas: "0x493E0", // 300,000 (0xa9059cbb + Tagならこれで十分)
-        };
-        const txHash = await window.ethereum.request({
-          method: 'eth_sendTransaction',
-          params: [finalTx], // txはDart側で作ったMapがそのままJSオブジェクトとして渡ります
-        });
-        return txHash;
-      } catch (error) {
-        console.error("Transaction Error:", error);
-        return null;
+    // Viteのパーツが読み込まれているかチェック
+    if (!window.ReownCore) {
+      console.error("ReownCore bundle is not loaded yet. Retrying in 500ms...");
+      setTimeout(() => window.initReownApp(projectId), 500);
+      return;
+    }
+
+    try {
+      const { createAppKit, WagmiAdapter, networks, subscribeAccount } = window.ReownCore;
+      const selectedNetworks = [networks.mainnet, networks.polygon];
+
+      // アダプターの作成
+      wagmiAdapterInstance = new WagmiAdapter({
+        projectId: projectId,
+        networks: selectedNetworks
+      });
+
+      const metadata = {
+        name: 'Metamask JPYC Sub-Payment System',
+        description: "Generate EIP-681",
+        url: "https://github.com/ChocoTanaka/Metamask_EIP-681_Pay_Web",
+        icons: ['https://raw.githubusercontent.com/ChocoTanaka/Metamask_EIP-681_Pay_Web/master/JPYCPay_512.png']
+      }
+
+      // モーダルインスタンスの作成
+      appKitInstance = createAppKit({
+        adapters: [wagmiAdapterInstance],
+        networks: selectedNetworks,
+        metadata,
+        projectId: projectId,
+      });
+
+      console.log("Reown AppKit initialized successfully in index.html!");
+    }catch (e){
+      console.error("Failed to initialize:", e);
+    }
+  };
+
+  window.getWalletAddress = function() {
+    if (!wagmiAdapterInstance) {
+      console.warn("Adapter not ready");
+      return null;
+    }
+
+    try {
+      const { getAccount } = window.ReownCore;
+      // 現在の接続状態（アカウント情報）をパッと取得
+      const account = getAccount(wagmiAdapterInstance.wagmiConfig);
+
+      // アドレスがあればそれを返し、なければ null を返す
+      return account?.address || "NOT_INSTALLED";
+    } catch (e) {
+      console.error("Failed to get address:", e);
+      return "NOT_INSTALLED";
+    }
+  }
+
+  // ② アドレス変更検知リスナーを登録する（Dartから呼ばれる）
+  window.registerAddressListener = function(dartCallback) {
+    currentDartCallback = dartCallback;
+    // 登録された瞬間に、もしすでに接続されていれば現在のアドレスを即座にDartへ返すチェック
+    if (wagmiAdapterInstance && appKitInstance) {
+      const state = appKitInstance.getAccount();
+      if (state && state.address) {
+        dartCallback(state.address);
       }
     }
-  </script>
+  };
+
+  // ③ ウォレット接続要求（Dartから呼ばれる）
+  window.connectMetaMask = async function() {
+    if (!appKitInstance) {
+      console.error("AppKit not ready");
+      return null;
+    }
+    try {
+      // モーダルを開く（拡張機能やアプリが起動）
+      await appKitInstance.open();
+      return "OPENED";
+    } catch (e) {
+      console.error("Open modal error:", e);
+      return null;
+    }
+  };
+
+  // ④ トランザクション送信（Dartから呼ばれる）
+  window.sendTransactionJS = async function(tx) {
+    if (!wagmiAdapterInstance) {
+      console.error("Adapter not ready");
+      return null;
+    }
+    try {
+      const { sendTransaction } = window.ReownCore;
+      const config = wagmiAdapterInstance.wagmiConfig;
+
+      const txHash = await sendTransaction(config, {
+        to: tx.to,
+        data: tx.data,
+        value: tx.value,
+        gas: tx.gas ? BigInt(tx.gas) : undefined,
+      });
+
+      return txHash;
+    } catch (e) {
+      console.error("Tx Error in index.html:", e);
+      return "__ERROR__:" + e.message;
+    }
+  };
+
+  // 💡 ロードが完了したことを示すフラグを立てる
+  window.isReownScriptReady = true;
+
+  // 💡 もしすでにFlutter側がイベントリスナーを登録していれば、即時通知するイベントを発火
+  window.dispatchEvent(new Event('reown_script_ready'));
+</script>
+<script src="flutter_bootstrap.js" async></script>
 </body>
 </html>

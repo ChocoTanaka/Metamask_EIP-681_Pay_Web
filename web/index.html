@@ -56,7 +56,7 @@
 
     try {
       const { createAppKit, WagmiAdapter, networks, subscribeAccount } = window.ReownCore;
-      const selectedNetworks = [networks.mainnet, networks.polygon];
+      const selectedNetworks = [networks.polygon, networks.mainnet];
 
       // アダプターの作成
       wagmiAdapterInstance = new WagmiAdapter({
@@ -67,7 +67,7 @@
       const metadata = {
         name: 'Metamask JPYC Sub-Payment System',
         description: "Generate EIP-681",
-        url: "https://github.com/ChocoTanaka/Metamask_EIP-681_Pay_Web",
+        url: "https://chocotanaka.github.io/Metamask_EIP-681_Pay_Web/",
         icons: ['https://raw.githubusercontent.com/ChocoTanaka/Metamask_EIP-681_Pay_Web/master/JPYCPay_512.png']
       }
 

@@ -56,7 +56,7 @@
 
     try {
       const { createAppKit, WagmiAdapter, networks, subscribeAccount } = window.ReownCore;
-      const selectedNetworks = [networks.polygon, networks.mainnet];
+      const selectedNetworks = [networks.polygon];
 
       // アダプターの作成
       wagmiAdapterInstance = new WagmiAdapter({
@@ -77,7 +77,7 @@
         networks: selectedNetworks,
         metadata: metadata,
         projectId: projectId,
-        defaultNetwork: networks.polygon,
+        defaultNetwork: polygon,
         features: {
         analytics: false,
         email: false
@@ -167,34 +167,15 @@
     }
   };
 
-  // ④ トランザクション送信（Dartから呼ばれる）
+   // ④ トランザクション送信（Dartから呼ばれる）
   window.sendTransactionJS = async function(tx) {
     if (!wagmiAdapterInstance) {
       console.error("Adapter not ready");
       return null;
     }
     try {
-      const { sendTransaction, getAccount, switchChain } = window.ReownCore;
+      const { sendTransaction } = window.ReownCore;
       const config = wagmiAdapterInstance.wagmiConfig;
-
-      // ① 現在ウォレットがどこのチェーンを向いているかチェック
-      const account = getAccount(config);
-      const currentChainId = account?.chain?.id;
-
-      console.log("Current Wallet Chain ID:", currentChainId);
-
-      // ② もしPolygon（137）じゃなければ、強制的にPolygonへの切り替えポップアップを出す
-      if (currentChainId !== 137) {
-        console.log("チェーンがPolygonではないため、切り替えを要求します...");
-        try {
-          // これを呼ぶと、MetaMask等で「ネットワークをPolygonに切り替えますか？」という承認画面が出ます
-          await switchNetwork(config, { chainId: 137 });
-          console.log("Polygonへのチェーン切り替えが完了しました。");
-        } catch (switchError) {
-          console.error("チェーン切り替えに失敗、またはユーザーが拒否しました:", switchError);
-          return "__ERROR__:CHAIN_SWITCH_REJECTED";
-        }
-      }
 
       const txHash = await sendTransaction(config, {
         chainId: 137,

@@ -168,7 +168,7 @@ class Appkit{
 
     final JSString? txHash = await _sendTransactionJS(jsTx).toDart;
 
-    if (txHash != null) {
+    if (!(txHash!.toDart.contains("ERROR"))) {
       print('Transaction Hash: ${txHash.toDart}');
       // 成功後の処理
       return "Success : ${txHash.toDart}";

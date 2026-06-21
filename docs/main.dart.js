@@ -51234,7 +51234,8 @@ o.toString
 s=3
 return B.L(B.et(v.G.sendTransactionJS(o),t.ob),$async$EO)
 case 3:p=c
-if(p!=null){B.d4("Transaction Hash: "+p)
+p.toString
+if(!A.p.B(p,"ERROR")){B.d4("Transaction Hash: "+p)
 q="Success : "+p
 s=1
 break}else{B.d4("Transaction failed or rejected")

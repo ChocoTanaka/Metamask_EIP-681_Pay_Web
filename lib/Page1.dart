@@ -6,8 +6,7 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 import 'Web3.dart';
 import 'dart:js_interop';
 
-@JS('sendTransactionJS')
-external JSPromise<JSString?> _sendTransactionJS(JSAny tx);
+
 
 class Page1 extends StatefulWidget {
   const Page1({super.key});
@@ -32,22 +31,7 @@ class _MPSsState_Read extends State<Page1> {
   );
 
 
-  Future<String> requestSignatureJS(Map<String, dynamic> tx) async {
-    // DartのMapをJSオブジェクトに変換
-    // js_interopのユーティリティを使って変換するか、単純なjs_util等を使用
-    final jsTx = tx.jsify()!;
 
-    final JSString? txHash = await _sendTransactionJS(jsTx).toDart;
-
-    if (txHash != null) {
-      print('Transaction Hash: ${txHash.toDart}');
-      // 成功後の処理
-      return "Success : ${txHash.toDart}";
-    } else {
-      print('Transaction failed or rejected');
-      return "Failure";
-    }
-  }
 
   @override
   void initState(){
@@ -140,12 +124,8 @@ class _MPSsState_Read extends State<Page1> {
                   tag: tx_R.tag
               );
               String hash = "";
-              if(kIsWeb){
-                // WebならJS Interop経由
-                hash = await requestSignatureJS(tx);
-              }else{
-                hash = await Appkit().RequestTx(tx);
-              }
+              // WebならJS Interop経由
+              hash = await Appkit().requestSignatureJS(tx);
               Navigator.pop(context);
               if(hash.startsWith("Success")){
                 Check_Hash(context, "送金完了", hash);

@@ -1,3 +1,7 @@
+import "dart:async";
+import "dart:js_interop";
+import "dart:js_interop_unsafe";
+import 'package:web/web.dart' as web;
 import "package:flutter/material.dart";
 import "package:reown_appkit/reown_appkit.dart";
 
@@ -25,6 +29,20 @@ Map<String, RequiredNamespace> r_Ns = {
   ),
 };
 
+// index.htmlの window.initReownApp をDartの関数として定義
+@JS('initReownApp')
+external void jsInitReownApp(JSString projectId);
+// JSの関数を定義
+@JS('connectMetaMask')
+external JSPromise<JSString?> jsConnectMetaMask();
+// 💡 window.getWalletAddress を定義
+@JS('getWalletAddress')
+external JSString? jsGetWalletAddress();
+// 💡 window.disconnectWalletJS を定義
+@JS('disconnectWalletJS')
+external JSPromise<JSBoolean> jsDisconnectWalletJS();
+@JS('sendTransactionJS')
+external JSPromise<JSString?> _sendTransactionJS(JSAny tx);
 class Appkit{
 // 1. クラス内部で自分自身の唯一のインスタンスを作る
   static final Appkit _instance = Appkit._internal();
@@ -43,95 +61,129 @@ class Appkit{
   String get userAddress => addressNotifier.value;
 
 
-  ReownAppKitModal? appKitModal;
+  void waitForJsAndInit() {
+    // 💡 window 直下に 'initReownApp' というプロパティ（関数）が生えたかチェック
+    final bool isJsReady = web.window.hasProperty('initReownApp'.toJS).toDart;
 
-  Set<String> supportedWalletIds = <String>{
-    'c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96', // MetaMask ID
-    '38f5d18bd8522c244bdd70cb4a68e0e718865155811c043f052fb9f1c51de662', //bitget
-    '5d9f1395b3a8e848684848dc4147cbd05c8d54bb737eac78fe103901fe6b01a1' //okx
-    'fd20dc426fb37566d803205b19bbc1d4096b248ac04548e3cfb6b3a38bd033aa', //　base
-  };
+    if (isJsReady) {
+      jsInitReownApp(const String.fromEnvironment("ProjectId").toJS);
+    } else {
+      // ② まだなら、JS側がロード完了したタイミング（イベント）を検知して実行する
+      web.window.addEventListener('reown_script_ready', (web.Event event) {
+        jsInitReownApp(const String.fromEnvironment("ProjectId").toJS);
+      }.toJS);
+      print("ready");
+    }
+  }
 
-
-  Future appKitInit(BuildContext context) async {
-
-    final appKit = await ReownAppKit.createInstance(
-      projectId: const String.fromEnvironment("ProjectId"),
-      relayUrl: 'wss://relay.walletconnect.com',
-      metadata: const PairingMetadata(
-        name: "Metamask JPYC Sub-Payment System",
-        description: "Generate EIP-681 receipt.",
-        url: "https://github.com/ChocoTanaka/Metamask_EIP-681_Pay_Web",
-        icons: ['https://raw.githubusercontent.com/ChocoTanaka/Metamask_EIP-681_Pay_Web/master/JPYCPay_512.png'],
-        redirect: Redirect(
-          universal: 'https://chocotanaka.github.io/Metamask_EIP-681_Pay_Web/', // 💡 Universal Linkが理想
-          linkMode: true,
-        ),
-      ),
-    );
-
-    appKitModal = ReownAppKitModal(
-      context: context,
-      appKit: appKit,
-      optionalNamespaces: r_Ns,
-      featuredWalletIds: supportedWalletIds,
-    );
-
-    print("Connecting to Relay...");
-// initを呼ぶ前にCoreの状態を確認
-    print("Relay Endpoint: ${appKitModal?.appKit?.core.relayUrl}");
-
+  // 接続ボタンが押された時の非同期ロジック
+  Future<void> onConnectPressed() async {
     try {
-      await appKitModal?.init();
-    } on ReownAppKitModalException catch (e) {
-      print("AppKitModal専用エラー: ${e.message}"); // ここに具体的な理由が出るはずです
-    } catch (e) {
-      print("その他のエラー: $e");
-    }
-    final isConnected = appKitModal?.appKit?.core.relayClient.isConnected ?? false;
-    print("AppKit Initialized: $isConnected");
+      // 💡 準備ができていなければ自動で待機し、準備ができ次第モーダルが開いて結果が返る
+      final String? result = await connectWeb3();
 
-
-    appKitModal?.appKit?.onSessionConnect.subscribe((_) {
-      final session = appKitModal?.session;
-      if (session == null) {
-        print('session is null');
-        return;
+      if (result == "OPENED") {
+        print("モーダルが正常に開きました。ユーザーのウォレット操作を待っています...");
       } else {
-        final accounts =
-            session.namespaces!['eip155']?.accounts ?? [];
-
-        if (accounts.isEmpty) return;
-
-        final address = accounts.first.split(':')[2];
-        addressNotifier.value = address;
+        print("モーダルの起動に失敗、またはキャンセルされました。");
       }
-    });
-  }
-
-  void Openview() async{
-    if (appKitModal?.session != null) {
-      await appKitModal?.disconnect();
+    } catch (e) {
+      print("ウォレット接続処理中にエラーが発生しました: $e");
     }
-    print("WC URI: ${appKitModal?.wcUri}");
-    await appKitModal?.openModalView();
   }
 
-  void Disconnect() async{
-    await appKitModal?.disconnect();
+  Future<String?> connectWeb3() async {
+    final completer = Completer<String?>();
+    // ① すでにJS側の関数（connectMetaMask）が存在するかチェック
+    final bool isFnReady = web.window
+        .hasProperty('connectMetaMask'.toJS)
+        .toDart;
+    if (isFnReady) {
+      try {
+        // JSの関数を呼び出し（PromiseをawaitするためにtoDartを使用）
+        final JSString? result = await jsConnectMetaMask().toDart;
+
+        if (result != null) {
+          // JavaScriptからアドレスを取得
+          final JSString? jsAddress = jsGetWalletAddress();
+
+          if (jsAddress != null) {
+            final String address = jsAddress.toDart;
+            print("現在のウォレットアドレスを取得しました: $address");
+
+            if (address == "NOT_INSTALLED") {
+              print("MetaMaskが見つかりません");
+            } else {
+              Appkit().addressNotifier.value = address;
+            }
+          }
+        }
+      } catch (e) {
+        print("JS Interop Error: $e");
+      }
+    } else {
+      print("⏳ JS版の接続関数がまだ未定義のため、ロードを待機します...");
+
+      // ② まだ準備ができていなければ、100msごとに監視して生えてきた瞬間に実行する
+      Timer.periodic(const Duration(milliseconds: 500), (timer) async {
+        final bool isNowReady = web.window
+            .hasProperty('connectMetaMask'.toJS)
+            .toDart;
+        if (isNowReady) {
+          timer.cancel(); // 監視をストップ
+          print("ready");
+          try {
+            // JSの関数を呼び出し（PromiseをawaitするためにtoDartを使用）
+            final JSString? result = await jsConnectMetaMask().toDart;
+
+            if (result != null) {
+              final String address = result.toDart;
+              completer.complete(result.toDart);
+              if (address == "NOT_INSTALLED") {
+                print("MetaMaskが見つかりません");
+              } else {
+                Appkit().addressNotifier.value = address;
+              }
+            }
+          } catch (e) {
+            print("JS Interop Error: $e");
+          }
+        }
+      });
+    }
+    return completer.future;
   }
 
-  Future<String> RequestTx(Map<String, dynamic> tx) async{
-    final response = await appKitModal?.request(
-      topic: appKitModal?.session!.topic,
-      chainId: 'eip155:137',
-      request: SessionRequestParams(
-          method: "eth_sendTransaction",
-          params: [tx]
-      ),
-    );
-    // 成功すると、トランザクションハッシュが返ってきます
-    print('Transaction Hash: $response');
-    return "Success : ${response.toString()}";
+  Future<void> logoutWallet() async {
+    try {
+      // JSの切断処理を呼び出して await する
+      final JSBoolean isSuccess = await jsDisconnectWalletJS().toDart;
+
+      if (isSuccess.toDart) {
+        print("ウォレットの接続解除に成功しました！");
+        // ここでDart側の状態（アドレス保持用変数など）をクリアする
+      } else {
+        print("ウォレットの接続解除に失敗しました。");
+      }
+    } catch (e) {
+      print("切断処理中にエラーが発生しました: $e");
+    }
+  }
+
+  Future<String> requestSignatureJS(Map<String, dynamic> tx) async {
+    // DartのMapをJSオブジェクトに変換
+    // js_interopのユーティリティを使って変換するか、単純なjs_util等を使用
+    final jsTx = tx.jsify()!;
+
+    final JSString? txHash = await _sendTransactionJS(jsTx).toDart;
+
+    if (txHash != null) {
+      print('Transaction Hash: ${txHash.toDart}');
+      // 成功後の処理
+      return "Success : ${txHash.toDart}";
+    } else {
+      print('Transaction failed or rejected');
+      return "Failure";
+    }
   }
 }

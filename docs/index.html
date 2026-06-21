@@ -104,18 +104,6 @@
     }
   }
 
-  // ② アドレス変更検知リスナーを登録する（Dartから呼ばれる）
-  window.registerAddressListener = function(dartCallback) {
-    currentDartCallback = dartCallback;
-    // 登録された瞬間に、もしすでに接続されていれば現在のアドレスを即座にDartへ返すチェック
-    if (wagmiAdapterInstance && appKitInstance) {
-      const state = appKitInstance.getAccount();
-      if (state && state.address) {
-        dartCallback(state.address);
-      }
-    }
-  };
-
   // ③ ウォレット接続要求（Dartから呼ばれる）
   window.connectMetaMask = async function() {
     if (!appKitInstance) {
@@ -161,6 +149,26 @@
 
   // 💡 もしすでにFlutter側がイベントリスナーを登録していれば、即時通知するイベントを発火
   window.dispatchEvent(new Event('reown_script_ready'));
+
+  // 💡 【ここを追加！】ウォレットの接続を解除する関数
+  window.disconnectWalletJS = async function() {
+    if (!wagmiAdapterInstance) {
+      console.warn("Adapter not ready");
+      return false;
+    }
+
+    try {
+      const { disconnect } = window.ReownCore;
+      // disconnect を実行してセッションを切断
+      await disconnect(wagmiAdapterInstance.wagmiConfig);
+
+      console.log("Wallet disconnected successfully.");
+      return true;
+    } catch (e) {
+      console.error("Failed to disconnect wallet:", e);
+      return false;
+    }
+  };
 </script>
 <script src="flutter_bootstrap.js" async></script>
 </body>

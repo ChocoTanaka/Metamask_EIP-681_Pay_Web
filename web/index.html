@@ -73,11 +73,15 @@
 
       // モーダルインスタンスの作成
       appKitInstance = createAppKit({
-        defaultNetwork: networks.polygon,
         adapters: [wagmiAdapterInstance],
         networks: selectedNetworks,
-        metadata,
+        metadata: metadata,
         projectId: projectId,
+        defaultNetwork: networks.polygon,
+        features: {
+        analytics: false,
+        email: false
+      }
       });
 
       console.log("Reown AppKit initialized successfully in index.html!");
@@ -111,7 +115,6 @@
       console.error("AppKit not ready");
       return null;
     }
-
     try {
       const { getAccount } = window.ReownCore;
       const config = wagmiAdapterInstance.wagmiConfig;
@@ -158,11 +161,11 @@
           }
         }, 200);
       });
-
     } catch (e) {
       console.error("Open modal error:", e);
       return null;
     }
+  };
 
   // ④ トランザクション送信（Dartから呼ばれる）
   window.sendTransactionJS = async function(tx) {

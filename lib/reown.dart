@@ -3,7 +3,6 @@ import "dart:js_interop";
 import "dart:js_interop_unsafe";
 import 'package:web/web.dart' as web;
 import "package:flutter/material.dart";
-import "package:reown_appkit/reown_appkit.dart";
 
 
 String maskMiddle(String text, {int head = 6, int tail = 6}) {
@@ -14,20 +13,6 @@ String maskMiddle(String text, {int head = 6, int tail = 6}) {
       '...' +
       text.substring(text.length - tail);
 }
-
-Map<String, RequiredNamespace> r_Ns = {
-  'eip155': RequiredNamespace(
-    chains: ['eip155:137'], // eth,pol
-    methods: [
-      "eth_sendTransaction",
-      "eth_signTransaction",
-
-    ],
-    events: [
-      'accountsChanged',
-    ],
-  ),
-};
 
 // index.htmlの window.initReownApp をDartの関数として定義
 @JS('initReownApp')
@@ -100,23 +85,23 @@ class Appkit{
         .toDart;
     if (isFnReady) {
       try {
-        // JSの関数を呼び出し（PromiseをawaitするためにtoDartを使用）
+        print("ウォレット処理を開始します...");
+
+        // JSの関数を呼び出し、Promiseが解決するのを待つ（新規なら承認待ち、接続済みなら即返る）
         final JSString? result = await jsConnectMetaMask().toDart;
 
         if (result != null) {
-          // JavaScriptからアドレスを取得
-          final JSString? jsAddress = jsGetWalletAddress();
+          final String address = result.toDart;
+          print("ウォレットアドレスを認識しました: $address");
 
-          if (jsAddress != null) {
-            final String address = jsAddress.toDart;
-            print("現在のウォレットアドレスを取得しました: $address");
-
-            if (address == "NOT_INSTALLED") {
-              print("MetaMaskが見つかりません");
-            } else {
-              Appkit().addressNotifier.value = address;
-            }
+          if (address == "NOT_INSTALLED") {
+            print("MetaMaskが見つかりません");
+          } else {
+            // 取れたアドレスをAppkitの状態管理（Notifier）に安全に注入
+            Appkit().addressNotifier.value = address;
           }
+        } else {
+          print("接続がキャンセルされたか、タイムアウトしました。");
         }
       } catch (e) {
         print("JS Interop Error: $e");
@@ -133,17 +118,23 @@ class Appkit{
           timer.cancel(); // 監視をストップ
           print("ready");
           try {
-            // JSの関数を呼び出し（PromiseをawaitするためにtoDartを使用）
+            print("ウォレット処理を開始します...");
+
+            // JSの関数を呼び出し、Promiseが解決するのを待つ（新規なら承認待ち、接続済みなら即返る）
             final JSString? result = await jsConnectMetaMask().toDart;
 
             if (result != null) {
               final String address = result.toDart;
-              completer.complete(result.toDart);
+              print("ウォレットアドレスを認識しました: $address");
+
               if (address == "NOT_INSTALLED") {
                 print("MetaMaskが見つかりません");
               } else {
+                // 取れたアドレスをAppkitの状態管理（Notifier）に安全に注入
                 Appkit().addressNotifier.value = address;
               }
+            } else {
+              print("接続がキャンセルされたか、タイムアウトしました。");
             }
           } catch (e) {
             print("JS Interop Error: $e");

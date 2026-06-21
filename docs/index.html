@@ -73,6 +73,7 @@
 
       // モーダルインスタンスの作成
       appKitInstance = createAppKit({
+        defaultNetwork: networks.polygon,
         adapters: [wagmiAdapterInstance],
         networks: selectedNetworks,
         metadata,
@@ -106,19 +107,62 @@
 
   // ③ ウォレット接続要求（Dartから呼ばれる）
   window.connectMetaMask = async function() {
-    if (!appKitInstance) {
+    if (!appKitInstance || !wagmiAdapterInstance) {
       console.error("AppKit not ready");
       return null;
     }
+
     try {
-      // モーダルを開く（拡張機能やアプリが起動）
-      await appKitInstance.open();
-      return "OPENED";
+      const { getAccount } = window.ReownCore;
+      const config = wagmiAdapterInstance.wagmiConfig;
+
+      // 1. ✨【条件分岐】今すでに接続済みのアドレスがあるかチェック
+      let account = getAccount(config);
+      if (account && account.address) {
+        console.log("既存のセッションを検知しました。詳細画面を開きます。");
+
+        // すでに接続されているので、open() を呼ぶと詳細画面（残高やDisconnectボタンの画面）が開く
+        appKitInstance.open();
+
+        // 接続済みなので、待機せずに今のアドレスを即座にDartへ返す
+        return account.address;
+      }
+
+      // 2. ❌ 未接続の場合のフロー
+      console.log("未接続のため、新規接続モーダルを起動します。");
+      appKitInstance.open(); // これでウォレット選択画面が開く
+
+      // アドレスが確定する（ユーザーが承認する）までループ監視
+      return new Promise((resolve) => {
+        let attempts = 0;
+        const maxAttempts = 150; // 最大30秒
+
+        const interval = setInterval(() => {
+          attempts++;
+          const currentAccount = getAccount(config);
+
+          // ユーザーが承認してアドレスが取れた瞬間
+          if (currentAccount && currentAccount.address) {
+            clearInterval(interval);
+
+            // 新規接続時は、承認が完了したらスマートにモーダルを閉じる
+            appKitInstance.close();
+
+            resolve(currentAccount.address);
+          }
+
+          // タイムアウト、または手動で閉じられた場合
+          if (attempts >= maxAttempts) {
+            clearInterval(interval);
+            resolve(null);
+          }
+        }, 200);
+      });
+
     } catch (e) {
       console.error("Open modal error:", e);
       return null;
     }
-  };
 
   // ④ トランザクション送信（Dartから呼ばれる）
   window.sendTransactionJS = async function(tx) {

@@ -42,7 +42,6 @@ dependencies:
   package_info_plus: ^9.0.0
   web3dart: ^3.0.2
   mobile_scanner: ^7.2.0
-  reown_appkit: ^1.8.3
   pdf: ^3.12.0
   printing: ^5.14.3
 

@@ -163,7 +163,7 @@ class MPSs_Home extends State<MPSs_Stateful>{
                 child: Container(
                   // ここでPC基準のサイズ（キャンバスの大きさ）を完全に固定する
                   width: constraints.maxWidth >= 1000 ? constraints.maxWidth : 1000,
-                  height: constraints.maxHeight >=700 ? constraints.maxHeight : 700,
+                  height: constraints.maxHeight >=600 ? constraints.maxHeight : 600,
                   color: Colors.white,
                   child: _screens[_selectedIndex],
                 ),

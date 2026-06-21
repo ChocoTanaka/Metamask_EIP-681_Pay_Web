@@ -81,7 +81,7 @@
         features: {
         analytics: false,
         email: false
-      }
+        }
       });
 
       console.log("Reown AppKit initialized successfully in index.html!");
@@ -177,6 +177,29 @@
       const { sendTransaction } = window.ReownCore;
       const config = wagmiAdapterInstance.wagmiConfig;
 
+      // 💡 switchNetwork を ReownCore から取り出す
+      const { sendTransaction, getAccount, switchNetwork } = window.ReownCore;
+      const config = wagmiAdapterInstance.wagmiConfig;
+
+      // ① 現在ウォレットがどこのチェーンを向いているかチェック
+      const account = getAccount(config);
+      const currentChainId = account?.chain?.id;
+
+      console.log("Current Wallet Chain ID:", currentChainId);
+
+      // ② もしPolygon（137）じゃなければ、強制的にPolygonへの切り替えポップアップを出す
+      if (currentChainId !== 137) {
+        console.log("チェーンがPolygonではないため、切り替えを要求します...");
+        try {
+          // これを呼ぶと、MetaMask等で「ネットワークをPolygonに切り替えますか？」という承認画面が出ます
+          await switchNetwork(config, { chainId: 137 });
+          console.log("Polygonへのチェーン切り替えが完了しました。");
+        } catch (switchError) {
+          console.error("チェーン切り替えに失敗、またはユーザーが拒否しました:", switchError);
+          return "__ERROR__:CHAIN_SWITCH_REJECTED";
+        }
+      }
+
       const txHash = await sendTransaction(config, {
         chainId: 137,
         to: tx.to,
@@ -191,7 +214,6 @@
       return "__ERROR__:" + e.message;
     }
   };
-
   // 💡 ロードが完了したことを示すフラグを立てる
   window.isReownScriptReady = true;
 

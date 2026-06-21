@@ -51119,7 +51119,7 @@ B.af_.prototype={
 $2(a,b){var s,r=null,q=b.b
 q=q>=1000?q:1000
 s=b.d
-s=s>=700?s:700
+s=s>=600?s:600
 return B.hy(new B.Dp(A.aN,B.nV(r,this.b[this.a.d],A.ae,A.N,r,r,r,s,r,r,r,r,q),!1,1,0.5,r),r,r)},
 $S:311}
 B.af0.prototype={

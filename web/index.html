@@ -174,10 +174,6 @@
       return null;
     }
     try {
-      const { sendTransaction } = window.ReownCore;
-      const config = wagmiAdapterInstance.wagmiConfig;
-
-      // 💡 switchNetwork を ReownCore から取り出す
       const { sendTransaction, getAccount, switchChain } = window.ReownCore;
       const config = wagmiAdapterInstance.wagmiConfig;
 

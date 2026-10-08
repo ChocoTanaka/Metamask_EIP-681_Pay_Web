@@ -8,6 +8,23 @@ final String JPYCAddress = "0xE7C3D8C9a439feDe00D2600032D5dB0Be71C3c29";
 
 final JPYCDecimal = 18;
 
+class EIP712Data{
+  // 1. クラス内部で自分自身の唯一のインスタンスを作る
+  static final EIP712Data _instance = EIP712Data._internal();
+
+  // 2. コンストラクタが呼ばれたら、必ず上のインスタンスを返す
+  factory EIP712Data() {
+    return _instance;
+  }
+
+  // 3. 内部用コンストラクタ
+  EIP712Data._internal();
+
+  late BigInt wei_read = BigInt.from(0);
+  late String Address_read = "";
+  late String tag_read ="";
+}
+
 enum UriCheckError {
   notEVMUri,
   differentNetwork,
@@ -51,7 +68,7 @@ UriCheckError? validateRawUri(String uri) {
       return UriCheckError.differentNetwork;
     }
 
-    if (!(req.token == JPYCAddress)) {
+    if (!(req.token.toLowerCase() == JPYCAddress.toLowerCase())) {
       return UriCheckError.invalidToken;
     }
 
@@ -210,7 +227,7 @@ String ShowAmount(BigInt Amount, {int Div = 18}){
 }
 
 
-
+//------検証用
 void Convert(String inputHex, Class_index index){
   // 138文字目（インデックスだと138）から、パディング(0000)の手前までを切り出す
   String hexAddress = inputHex.substring(10, 74); // 64文字分（32バイト分）

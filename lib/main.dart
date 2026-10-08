@@ -2,12 +2,12 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:js_interop';
 import 'dart:js_interop_unsafe';
+import 'package:erc681pay_dx/Web3.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'reown.dart';
 import 'Page1.dart';
 import 'Page2.dart';
-import 'Page3.dart';
 import 'package:web/web.dart' as web;
 
 // index.htmlの window.initReownApp をDartの関数として定義
@@ -33,7 +33,7 @@ class MPSs extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'MetaMask JPYC Sub-Payment System',
+      title: 'MetaMask JPYC Sub-Payment System v2',
       theme: ThemeData(
         fontFamily: "Noto Sans JP",
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
@@ -68,6 +68,32 @@ class MPSs_Home extends State<MPSs_Stateful>{
       Appkit().waitForJsAndInit();
     });
     Appkit().addressNotifier.addListener(_handleAppKitUpdate);
+
+
+  }
+
+  void parseQueryParameters() {
+    final uri = Uri.base;
+
+    // ?id=123&address=0xABC... から値を取り出す
+    final String? id = uri.queryParameters['id'];
+    final String? address = uri.queryParameters['address'];
+    final String? wei = uri.queryParameters['wei'];
+    final String? page = uri.queryParameters['page'];
+
+    if(page != null){
+
+    }
+
+    if (wei !=null && id != null && address != null) {
+      _onItemTapped(1);
+      // 取得したIDとアドレスを使って処理を進める（画面に表示するなど）
+      EIP712Data().wei_read = BigInt.from(num.parse(wei));
+      EIP712Data().Address_read = address;
+      EIP712Data().tag_read = id;
+      print("取得したID: $id");
+      print("取得したアドレス: $address");
+    }
   }
 
   // 通知が来たら呼ばれる関数
@@ -115,13 +141,6 @@ class MPSs_Home extends State<MPSs_Stateful>{
               leading: Icon(Icons.attach_money_outlined,size: 36),
               title: Text('Read',style: const TextStyle(fontSize: 24)),
             ),
-            ListTile(
-              onTap: () {
-                _onItemTapped(2);
-              },
-              leading: Icon(Icons.book,size: 36),
-              title: Text('Index',style: const TextStyle(fontSize: 24)),
-            ),
           ],
         )
     );
@@ -131,14 +150,12 @@ class MPSs_Home extends State<MPSs_Stateful>{
     final _screens = [
       Page2(),
       Page1(),
-      Page3()
     ];
 
     // 各画面のタイトルのリスト
     final List<String> _titles = [
-      'WriteQR Metamask JPYC Sub-Payment System',
-      'ReadQR Metamask JPYC Sub-Payment System',
-      'Index Metamask JPYC Sub-Payment System'
+      'WriteQR Metamask JPYC Sub-Payment System v2',
+      'ReadQR Metamask JPYC Sub-Payment System v2',
     ];
 
     return Scaffold(

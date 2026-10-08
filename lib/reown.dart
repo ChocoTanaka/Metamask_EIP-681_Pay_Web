@@ -28,6 +28,9 @@ external JSString? jsGetWalletAddress();
 external JSPromise<JSBoolean> jsDisconnectWalletJS();
 @JS('sendTransactionJS')
 external JSPromise<JSString?> _sendTransactionJS(JSAny tx);
+
+
+
 class Appkit{
 // 1. クラス内部で自分自身の唯一のインスタンスを作る
   static final Appkit _instance = Appkit._internal();

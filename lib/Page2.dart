@@ -30,6 +30,8 @@ class _MPSsState_Write extends State<Page2> {
   bool isShow = false;
   bool isTag = false;
 
+  DateTime deadline = DateTime.now();
+
   final ScrollController _scrollController_L = ScrollController();
 
   late String s_isCompany = "様";
@@ -39,6 +41,11 @@ class _MPSsState_Write extends State<Page2> {
     if(tag.isNotEmpty && tag.length ==16){
       uri += '&tag=$tag';
     }
+    return uri;
+  }
+
+  String URI2(String tag, String Address, String wei){
+    String uri = 'tanakasenki-subpayv2.jp/#/?&id=$tag&address=$Address&wei=$wei';
     return uri;
   }
 
@@ -67,7 +74,7 @@ class _MPSsState_Write extends State<Page2> {
                     tag_name_s,
                     style: const TextStyle(fontSize: 28),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(width: 20),
                   Text(
                     '　$s_isCompany',
                     style: const TextStyle(fontSize: 28),
@@ -81,14 +88,14 @@ class _MPSsState_Write extends State<Page2> {
                     '請求額：',
                     style: const TextStyle(fontSize: 28),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(width: 20),
                   Row(
                     children: <Widget>[
                       Text(
                         amount.toString(),
                         style: const TextStyle(fontSize: 28),
                       ),
-                      const SizedBox(height: 10),
+                      const SizedBox(width: 20),
                       Text(
                         '　JPYC',
                         style: const TextStyle(fontSize: 28),
@@ -104,12 +111,29 @@ class _MPSsState_Write extends State<Page2> {
                     '請求書番号：',
                     style: const TextStyle(fontSize: 28),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(width: 20),
                   Text(
                     '${tag1_s} - ${tag2_s} - ${tag3_s} - ${tag4_s}',
                     style: const TextStyle(fontSize: 28),
                   )
                 ],
+              ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  Text(
+                    '締め切り：',
+                    style: const TextStyle(fontSize: 28),
+                  ),
+                  const SizedBox(width: 20),
+                  Text(
+                    "${deadline.year} / ${deadline.month} / ${deadline.day}",
+                    style: TextStyle(
+                        fontSize: 28,
+                        color: Colors.black
+                    ),
+                  ),
+                ]
               ),
               const SizedBox(height: 20),
               ElevatedButton(
@@ -121,10 +145,16 @@ class _MPSsState_Write extends State<Page2> {
                   ),
                   onPressed:() async{
                     makePdf(
-                        tag_name_s + s_isCompany,
+                        '$tag_name_s　$s_isCompany',
+                        Appkit().userAddress,
                         amount,
+                        deadline,
                         tag1_s,tag2_s,tag3_s,tag4_s,
-                        generatedUri!,
+                        URI2(
+                         tag1_s+tag2_s+tag3_s+tag4_s,
+                         Appkit().userAddress,
+                         amount.toString(),
+                        ),
                         reciever
                     );
                   },
@@ -132,7 +162,23 @@ class _MPSsState_Write extends State<Page2> {
                     'PDFを発行する',
                     style: const TextStyle(fontSize: 28),
                   )
-              )
+              ),
+              const SizedBox(height: 100),
+              ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(0),
+                    ),
+                    backgroundColor: Colors.blue[200],
+                  ),
+                  onPressed:() async{
+                    print("これから実験する");
+                  },
+                  child: Text(
+                    '請求書トランザクションを発行する',
+                    style: const TextStyle(fontSize: 28),
+                  )
+              ),
             ],
           )
       ),
@@ -346,6 +392,34 @@ class _MPSsState_Write extends State<Page2> {
         ),
         const SizedBox(height: 40),
         Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Text(
+              "締め切り:",
+              style: TextStyle(
+                  fontSize: 28,
+                  color: Colors.black
+              ),
+            ),
+            ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(0),
+                  ),
+                  backgroundColor: Colors.blue[200],
+                ),
+                onPressed:() async{
+                  await _selectDate(context);
+                },
+                child: Text(
+                  'カレンダー',
+                  style: const TextStyle(fontSize: 28),
+                )
+            ),
+          ],
+        ),
+        const SizedBox(height: 40),
+        Row(
           children: [
             Text(
               "受取（自社名）:",
@@ -368,10 +442,10 @@ class _MPSsState_Write extends State<Page2> {
             ),
           ],
         ),
-        const SizedBox(height: 75),
+        const SizedBox(height: 50),
         Container(
-          width: 300,
-          height:75,
+          width: 250,
+          height:50,
           child: ElevatedButton(
               style: ElevatedButton.styleFrom(
                 shape: RoundedRectangleBorder(
@@ -384,10 +458,6 @@ class _MPSsState_Write extends State<Page2> {
                     amount !=0
                 ){
                   setState(() {
-                    final BigInt amountWei = BigInt.from(amount * 1e18);
-                    final tag = tag1_s+tag2_s+tag3_s+tag4_s;
-                    final uri = URI(amountWei,tag);
-                    generatedUri = uri;
                     isShow = !isShow;
                   });
                 }else{
@@ -395,7 +465,7 @@ class _MPSsState_Write extends State<Page2> {
                 }
               },
               child: Text(
-                isShow ? "RESET" : "SET",
+                isShow ? "やり直し" : "作成",
                 style: TextStyle(
                     fontSize: 30,
                     color: Colors.black
@@ -406,6 +476,21 @@ class _MPSsState_Write extends State<Page2> {
       ],
     );
   }
+
+Future<void> _selectDate(BuildContext context) async {
+  final DateTime? picked = await showDatePicker(
+    context: context,
+    initialDate: DateTime.now(), // 初期選択日
+    firstDate: DateTime(DateTime.now().year), // 選択できる最古の日付
+    lastDate: DateTime(DateTime.now().year + 1), // 選択できる最新の日付
+  );
+  if (picked != null) {
+    // 選択された日付を使った処理を書く
+    deadline = picked;
+    print('選択された日付: $picked');
+  }
+
+}
 
   @override
   Widget build(BuildContext context) {

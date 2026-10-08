@@ -8820,7 +8820,7 @@ b9n(a){var s,r,q,p,o
 try{s=B.aSa(a)
 if(!A.p.bP(a,"ethereum:"))return A.b0F
 if(s.b!==137)return A.b0G
-if(s.a!=="0xE7C3D8C9a439feDe00D2600032D5dB0Be71C3c29")return A.b0H
+if(s.a.toLowerCase()!=="0xE7C3D8C9a439feDe00D2600032D5dB0Be71C3c29".toLowerCase())return A.b0H
 r=s.e
 q=B.WN(10).NE(18)
 if(q.c===0)B.W(A.nL)

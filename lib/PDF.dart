@@ -9,7 +9,9 @@ import 'package:printing/printing.dart';
 
 Future makePdf(
     String Name,
+    String Address,
     int amount,
+    DateTime deadline,
     String tag1,String tag2,String tag3,String tag4,
     String uri,
     String Reciever
@@ -70,26 +72,29 @@ Future makePdf(
         pw.SizedBox(height: 10),
         pw.Text("$Name", style: pw.TextStyle(font: font,fontSize: 20)),
         pw.SizedBox(height: 20),
-        pw.Text("金額: $amount JPYC", style: pw.TextStyle(font: font,fontSize: 20)),
-        pw.Text("管理番号: ${tag1} - ${tag2} - ${tag3} - ${tag4}", style: pw.TextStyle(font: font,fontSize: 20)),
+        pw.Text("アドレス：　$Address", style: pw.TextStyle(font: font,fontSize: 18)),
+        pw.Text("金額: $amount JPYC", style: pw.TextStyle(font: font,fontSize: 18)),
+        pw.Text("管理番号: ${tag1} - ${tag2} - ${tag3} - ${tag4}", style: pw.TextStyle(font: font,fontSize: 18)),
         pw.SizedBox(height: 20),
-        pw.Text("ネットワーク: Polygon", style: pw.TextStyle(font: font,fontSize: 20)),
+        pw.Text("締め切り: ${deadline.year}/${deadline.month}/${deadline.day}", style: pw.TextStyle(font: font,fontSize: 18)),
+        pw.SizedBox(height: 20),
+        pw.Text("ネットワーク: Polygon", style: pw.TextStyle(font: font,fontSize: 18)),
         pw.SizedBox(height: 30),
         pw.Center(
           child: pw.Text(
-              "以下のバーコードを Metamask JPYC Sub-Payment Systemで読み込んでお支払いください。", style: pw.TextStyle(font: font,fontSize: 20)
+              "以下のバーコードを読み込んでお支払いください。", style: pw.TextStyle(font: font,fontSize: 20)
           ),
         ),
         pw.SizedBox(height: 30),
         pw.Center(
           child: pw.Container(
-              width: 300,
-              height: 300,
+              width: 250,
+              height: 250,
               child: pw.BarcodeWidget(
                 data: uri, // ここにQRコードの文字列を渡す
                 barcode: pw.Barcode.qrCode(), // QRコード形式を指定
-                width: 250,
-                height: 250,
+                width: 220,
+                height: 220,
               )
           ),
         ),

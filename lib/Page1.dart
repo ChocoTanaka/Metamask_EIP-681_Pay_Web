@@ -1,9 +1,5 @@
-import 'dart:convert';
-
-import 'package:flutter/services.dart';
 import 'reown.dart';
 import 'package:flutter/material.dart';
-import 'package:mobile_scanner/mobile_scanner.dart';
 import 'Web3.dart';
 
 
@@ -19,20 +15,6 @@ class Page1 extends StatefulWidget {
 
 class _MPSsState_Read extends State<Page1> {
 
-  int i_situ = 0;
-  String Text_Error="";
-  String Read_Text = "";
-  String URI = "";
-  final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
-  Barcode? result;
-  final _controller = MobileScannerController(
-    facing: CameraFacing.back,
-    detectionSpeed: DetectionSpeed.normal, // 連続検知を防ぐために速度を調整
-    autoStart: true
-  );
-
-
-
 
   @override
   void initState(){
@@ -41,8 +23,6 @@ class _MPSsState_Read extends State<Page1> {
 
   @override
   void dispose() {
-    // 画面を離れる時に必ずリソースを解放する
-    _controller.dispose();
     super.dispose();
   }
 
@@ -92,7 +72,7 @@ class _MPSsState_Read extends State<Page1> {
                   style: const TextStyle(fontSize: 28),
                 ),
                 Text(
-                  EIP712Data().wei_read != BigInt.from(0) ? EIP712Data().wei_read.toString() : "NO DATA",
+                  EIP712Data().wei_read != "" ? EIP712Data().wei_read : "NO DATA",
                   style: const TextStyle(fontSize: 28),
                 ),
               ],
@@ -106,10 +86,11 @@ class _MPSsState_Read extends State<Page1> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(0),
                     ),
-                    backgroundColor: (Appkit().userAddress !="") ? Colors.blue[200] : Colors.grey,
+                    backgroundColor: (Appkit().userAddress !="" && EIP712Data().GotStatus()) ? Colors.blue[200] : Colors.grey,
                   ),
-                  onPressed: (){
+                  onPressed: () async{
                     print("こっから実験する");
+                    await Pay(Address: EIP712Data().Address_read, tag16: EIP712Data().tag_read, amountWei: SetWei(int.tryParse(EIP712Data().wei_read)!));
                   },
                   child: Text(
                     '支払う',

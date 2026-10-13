@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:qr_flutter/qr_flutter.dart';
 import 'reown.dart';
 import 'Web3.dart';
 import 'PDF.dart';
@@ -36,17 +35,23 @@ class _MPSsState_Write extends State<Page2> {
 
   late String s_isCompany = "様";
 
-  String URI(BigInt Wei, String tag){
-    String uri = 'ethereum:$JPYCAddress@137/transfer?address=${Appkit().userAddress}&uint256=$Wei';
-    if(tag.isNotEmpty && tag.length ==16){
-      uri += '&tag=$tag';
-    }
+
+  String URI2(String tag, String Address, String wei){
+    String uri = 'chocotanaka.tanakasenki-subpay.jp/#/?&id=$tag&address=$Address&wei=$wei';
     return uri;
   }
 
-  String URI2(String tag, String Address, String wei){
-    String uri = 'tanakasenki-subpayv2.jp/#/?&id=$tag&address=$Address&wei=$wei';
-    return uri;
+  bool GotStatus_send(){
+    if(tag1_s == "" || tag2_s == "" || tag3_s == "" || tag4_s ==""){
+      return false;
+    }
+    if(amount == 0){
+      return false;
+    }
+    if(deadline == DateTime.now()){
+      return false;
+    }
+    return true;
   }
 
 
@@ -159,7 +164,7 @@ class _MPSsState_Write extends State<Page2> {
                     );
                   },
                   child: Text(
-                    'PDFを発行する',
+                    '請求書PDFを発行する',
                     style: const TextStyle(fontSize: 28),
                   )
               ),
@@ -173,6 +178,7 @@ class _MPSsState_Write extends State<Page2> {
                   ),
                   onPressed:() async{
                     print("これから実験する");
+                    await CreateInvoice(tag16: (tag1_s+tag2_s+tag3_s+tag4_s), amountWei: SetWei(amount), DeadlineUnix: SetDeadline(deadline));
                   },
                   child: Text(
                     '請求書トランザクションを発行する',
@@ -451,11 +457,11 @@ class _MPSsState_Write extends State<Page2> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(0),
                 ),
-                backgroundColor: (Appkit().userAddress !="" && amount >0) ? Colors.blue[200] : Colors.grey,
+                backgroundColor: (Appkit().userAddress !="" && GotStatus_send()) ? Colors.blue[200] : Colors.grey,
               ),
               onPressed:() {
                 if(Appkit().userAddress != "" &&
-                    amount !=0
+                    GotStatus_send()
                 ){
                   setState(() {
                     isShow = !isShow;

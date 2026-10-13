@@ -5,7 +5,7 @@
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "This is a EIP-681 pay system for PC",
+    "description": "This is a EIP-721 pay system for PC",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

@@ -33,7 +33,7 @@
   <link rel="manifest" href="manifest.json">
 </head>
 <body>
-<script type="module" src="./js/reown-appkit2.js"></script>
+<script type="module" src="./js/reown-appkit3.js"></script>
 <script>
   let appKitInstance = null;
   let wagmiAdapterInstance = null;
@@ -66,7 +66,7 @@
 
       const metadata = {
         name: 'Metamask JPYC Sub-Payment System',
-        description: "Generate EIP-681",
+        description: "Connect Invoice into Transaction",
         url: "https://chocotanaka.github.io/Metamask_EIP-681_Pay_Web/",
         icons: ['https://raw.githubusercontent.com/ChocoTanaka/Metamask_EIP-681_Pay_Web/master/JPYCPay_512.png']
       }
@@ -78,6 +78,7 @@
         metadata: metadata,
         projectId: projectId,
         defaultNetwork: networks.polygon,
+        networks: [sepolia, polygon],
         features: {
         analytics: false,
         email: false
@@ -168,7 +169,7 @@
   };
 
    // ④ トランザクション送信（Dartから呼ばれる）
-  window.sendTransactionJS = async function(tx) {
+  window.sendTransactionJS = async function(to, data) {
     if (!wagmiAdapterInstance) {
       console.error("Adapter not ready");
       return null;
@@ -178,11 +179,9 @@
       const config = wagmiAdapterInstance.wagmiConfig;
 
       const txHash = await sendTransaction(config, {
-        chainId: 137,
-        to: tx.to,
-        data: tx.data,
-        value: tx.value,
-        gas: tx.gas ? BigInt(tx.gas) : undefined,
+        chainId: 11155111,
+        to: to,
+        data: data,
       });
 
       return txHash;

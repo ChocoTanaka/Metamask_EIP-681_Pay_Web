@@ -88,7 +88,7 @@ class MPSs_Home extends State<MPSs_Stateful>{
     if (wei !=null && id != null && address != null) {
       _onItemTapped(1);
       // 取得したIDとアドレスを使って処理を進める（画面に表示するなど）
-      EIP712Data().wei_read = BigInt.from(num.parse(wei));
+      EIP712Data().wei_read = wei;
       EIP712Data().Address_read = address;
       EIP712Data().tag_read = id;
       print("取得したID: $id");

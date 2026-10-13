@@ -1,12 +1,19 @@
 import 'dart:convert';
-import 'package:flutter/material.dart';
 import 'package:web3dart/web3dart.dart';
-import 'package:http/http.dart' as http;
-import 'dart:math' as math;
+import 'package:convert/convert.dart';
+import "dart:js_interop";
 
-final String JPYCAddress = "0xE7C3D8C9a439feDe00D2600032D5dB0Be71C3c29";
+@JS('sendTransactionJS')
+external JSPromise<JSString?> _sendTransactionJS(JSString to, JSString data);
 
+final String jpycAddress = "0xE7C3D8C9a439feDe00D2600032D5dB0Be71C3c29";
+
+final String contract = "0x0a56120d6E1863cE8c80B78778675eCB761E9f19";
+
+final jpycTokenAddress = EthereumAddress.fromHex(jpycAddress);
 final JPYCDecimal = 18;
+
+final contractAddress = EthereumAddress.fromHex(contract);
 
 class EIP712Data{
   // 1. クラス内部で自分自身の唯一のインスタンスを作る
@@ -20,71 +27,210 @@ class EIP712Data{
   // 3. 内部用コンストラクタ
   EIP712Data._internal();
 
-  late BigInt wei_read = BigInt.from(0);
+  late String wei_read = "";
   late String Address_read = "";
   late String tag_read ="";
-}
 
-enum UriCheckError {
-  notEVMUri,
-  differentNetwork,
-  invalidToken,
-  invalidFormat,
-  invalidDecimal,
-  invalidFunction,
-}
-
-String errorMessage(UriCheckError e) {
-  switch (e) {
-    case UriCheckError.notEVMUri:
-      return 'Not ERC-681 Recipt';
-    case UriCheckError.differentNetwork:
-      return 'Another Network';
-    case UriCheckError.invalidToken:
-      return 'Not JPYC';
-    case UriCheckError.invalidFormat:
-      return 'Invalid URI';
-    case UriCheckError.invalidDecimal:
-      return 'Invalid Digits';
-    case UriCheckError.invalidFunction:
-      return 'Unsupported Function';
+  bool GotStatus(){
+    if(this.wei_read !="" && this.tag_read !="" && this.Address_read !=""){
+      return true;
+    }
+    return false;
   }
 }
+
+// 1. ERC-20 の approve 関数用 ABI
+const erc20AbiMap = [
+  {
+    "inputs": [
+      {"name": "spender", "type": "address"},
+      {"name": "amount", "type": "uint256"}
+    ],
+    "name": "approve",
+    "outputs": [
+      {"name": "", "type": "bool"}
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+];
+
+String generateApproveCallData(BigInt trueamount) {
+  // Sepolia JPYC トークンのコントラクトアドレス
+
+  // DeployedContract の作成
+  final jpycContract = DeployedContract(
+    ContractAbi.fromJson(jsonEncode(erc20AbiMap), 'ERC20'),
+    jpycTokenAddress,
+  );
+
+  // ★ ここで approve 関数オブジェクト（approveFunction）を取得！
+  final approveFunction = jpycContract.function('approve');
+
+  // Call Data のエンコード
+  final approveCallData = approveFunction.encodeCall([
+    contractAddress,
+    trueamount,
+  ]);
+
+  print('Approve CallData: 0x${hex.encode(approveCallData)}');
+  return "0x${hex.encode(approveCallData)}";
+}
+
+const AbiMap_Create =
+[
+  {
+    "type": "function",
+    "name": "registerInvoice",
+    "inputs": [
+      {"name": "tag16", "type": "uint256"},
+      {"name": "amount", "type": "uint256"},
+      {"name": "deadline", "type": "uint256"}
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+];
+// jsonEncode で完全に文字列化してから渡す
+final abiJson_create = jsonEncode(AbiMap_Create);
+final contract_create = DeployedContract(
+  ContractAbi.fromJson(abiJson_create, 'InvoiceTx'),
+  contractAddress,
+);
+
+const AbiMap_Pay =
+[
+  {
+    "type": "function",
+    "name": "payInvoice",
+    "inputs": [
+      {"name": "payee", "type": "address"},
+      {"name": "tag16", "type": "uint256"}
+    ],
+    "outputs": [],
+    "stateMutability": "payable"
+  },
+];
+// jsonEncode で完全に文字列化してから渡す
+final abiJson_pay = jsonEncode(AbiMap_Pay);
+final contract_create2 = DeployedContract(
+  ContractAbi.fromJson(abiJson_create, 'InvoiceTx'),
+  contractAddress,
+);
+
+/*
+const AbiMap_Status =
+[
+  {
+    "type": "function",
+    "name": "getInvoiceStatus",
+    "inputs": [
+      {"name": "payee", "type": "address"},
+      {"name": "tag16", "type": "uint256"}
+    ],
+    "outputs": [
+      {"name": "", "type": "uint8"}
+    ],
+    "stateMutability": "view"
+  }
+];
+
+// jsonEncode で完全に文字列化してから渡す
+final abiJson_status = jsonEncode(AbiMap_Status);
+final contract_create3 = DeployedContract(
+  ContractAbi.fromJson(abiJson_create, 'InvoiceTx'),
+  contractAddress,
+);
+*/
+
+//インボイスの作成
+Future<void>CreateInvoice({
+  required String tag16,
+  required BigInt amountWei,
+  required BigInt DeadlineUnix
+}) async{
+// 文字列を 32 バイトの Uint8List (bytes32) にパディング
+
+  BigInt tag16Int = BigInt.from(num.parse(tag16));
+
+  final functionCall = contract_create.function('registerInvoice');
+  final transactionData = functionCall.encodeCall([
+    tag16Int,
+    amountWei,
+    DeadlineUnix
+  ]);
+
+  print('Encoded Transaction Data: 0x${hex.encode(transactionData)}');
+
+  final String callDataHex = "0x${hex.encode(transactionData)}";
+
+  final txHash = await _sendTransactionJS(
+      contract.toJS,
+      callDataHex.toJS
+  ).toDart;
+  print(txHash);
+}
+
+//支払
+Future<void>Pay({
+  required String Address,
+  required String tag16,
+  required BigInt amountWei
+}) async{
+  final Address_contract = EthereumAddress.fromHex(Address);
+  BigInt tag16BInt = BigInt.from(num.parse(tag16));
+
+  String approveCallDataHex = generateApproveCallData(amountWei);
+
+  // 送信先 (to) は JPYC のアドレス！
+  final approveTxHash = await _sendTransactionJS(
+      jpycAddress.toJS,
+      approveCallDataHex.toJS
+  ).toDart;
+
+  print('Approve 送信完了! Hash: ${approveTxHash?.toDart}');
+
+  // ★重要: オンチェーンで Approve トランザクションが承認（Blockに採り込まれる）されるまで数秒待ちます
+  print('Approve の承認待ち...');
+  await Future.delayed(Duration(seconds: 15));
+
+  // 4. トランザクションデータのエンコード (MetaMask等に渡すデータ)
+  final functionCall = contract_create.function('createEscrow');
+  final transactionData = functionCall.encodeCall([
+    Address_contract,
+    tag16BInt
+  ]);
+
+  print('Encoded Transaction Data: 0x${hex.encode(transactionData)}');
+
+  final String callDataHex = "0x${hex.encode(transactionData)}";
+
+  final txHash = await _sendTransactionJS(
+      contract.toJS,
+      callDataHex.toJS
+  ).toDart;
+  print(txHash);
+
+}
+
+
+//締め切りの次の日の00:00まで
+BigInt SetDeadline(DateTime time){
+  return BigInt.from((time.add(const Duration(days: 1)).millisecondsSinceEpoch ~/ 1000));
+}
+
+BigInt SetWei(int Amount){
+  BigInt Wei = BigInt.from(Amount) * BigInt.from(10).pow(JPYCDecimal);
+
+  return Wei;
+}
+
 
 String filltag(String tag) {
   List<String> tags = [tag.substring(4*0,4*1),tag.substring(4*1,4*2),tag.substring(4*2,4*3),tag.substring(4*3,4*4)];
   return '${tags[0]} - ${tags[1]} - ${tags[2]} - ${tags[3]}';
 }
 
-UriCheckError? validateRawUri(String uri) {
-
-  try {
-    final req = parseErc681(uri);
-    if (!uri.startsWith('ethereum:')) {
-      return UriCheckError.notEVMUri;
-    }
-
-    if (req.chainId != 137) {
-      return UriCheckError.differentNetwork;
-    }
-
-    if (!(req.token.toLowerCase() == JPYCAddress.toLowerCase())) {
-      return UriCheckError.invalidToken;
-    }
-
-    if (!isValid18Decimals(req.amount)) {
-      return UriCheckError.invalidDecimal;
-    }
-
-    if (req.function != "transfer") {
-      return UriCheckError.invalidFunction;
-    }
-  }catch(e){
-    return UriCheckError.invalidFormat;
-  }
-
-  return null; // OK
-}
 
 bool isValid18Decimals(BigInt amount) {
   final base = BigInt.from(10).pow(JPYCDecimal);
@@ -224,101 +370,4 @@ String ShowAmount(BigInt Amount, {int Div = 18}){
   if (integer.isEmpty) integer = '0';
 
   return decimal.isEmpty ? integer : '$integer.$decimal';
-}
-
-
-//------検証用
-void Convert(String inputHex, Class_index index){
-  // 138文字目（インデックスだと138）から、パディング(0000)の手前までを切り出す
-  String hexAddress = inputHex.substring(10, 74); // 64文字分（32バイト分）
-  print(hexAddress);
-  String address = "0x" + hexAddress.substring(24);
-  print("抽出されたアドレス: $address");
-  index.Address = address;
-
-  String hexAmount = inputHex.substring(74, 74 + 64); // 64文字分（32バイト分）
-  print(hexAmount);
-  BigInt amount = hexToInt(hexAmount);
-  BigInt decimals = BigInt.from(10).pow(JPYCDecimal);
-  final BigInt amountWei = BigInt.from(amount / decimals);
-  print("抽出された量: $amountWei");
-  index.Amount = amountWei.toString();
-
-  if(inputHex.length >138){
-    String hexMarker = inputHex.substring(138, 138 + 32); // 32文字分（16バイト分）
-    print(hexMarker);
-    try{
-      String invoiceID = utf8.decode(hexToBytes("0x" +hexMarker));
-      print("抽出された管理番号: $invoiceID");
-      index.tag = invoiceID;
-    }catch(e){
-      index.tag = "No TAG";
-    }
-  }else{
-    index.tag = "No TAG";
-  }
-  index.isConvert = true;
-  index.Status = "Completed.";
-}
-
-Future<String?> getInputDataDirectly(String txHash) async {
-  final rpcUrl = "https://polygon.drpc.org"; // または別のRPC URL
-
-  // 念のためハッシュを綺麗にする
-  final cleanHash = txHash.trim().startsWith('0x') ? txHash.trim() : '0x${txHash.trim()}';
-
-  try {
-    final response = await http.post(
-      Uri.parse(rpcUrl),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        "jsonrpc": "2.0",
-        "method": "eth_getTransactionByHash",
-        "params": [cleanHash],
-        "id": 1
-      }),
-    );
-
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> data = jsonDecode(response.body);
-
-      if (data['result'] != null && data['result']['input'] != null) {
-        // ここで生（String型）の input データが確実に取れます！
-        String inputData = data['result']['input'];
-        return inputData; // "0xa9059cbb..."
-      }
-    }
-    print(response.statusCode);
-    return null;
-  } catch (e) {
-    print("RPC直叩きエラー: $e");
-    return null;
-  }
-}
-
-
-class Class_index{
-  late String Status ="";
-  late String hash = "";
-  late String Address ="";
-  late String Amount ="";
-  late String tag ="";
-  late bool isConvert = false;
-
-  Class_index();
-
-}
-
-class indexController{
-  final Class_index index;
-  // 各行専用のコントローラーをクラス内に持たせる
-  final TextEditingController hashController;
-
-  indexController(String initialHash)
-      : index = new Class_index(),
-        hashController = TextEditingController(text: initialHash);
-
-  void dispose(){
-    hashController.dispose();
-  }
 }

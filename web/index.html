@@ -100,7 +100,7 @@
     try {
       const { getAccount } = window.ReownCore;
       // 現在の接続状態（アカウント情報）をパッと取得
-      const account = getAccount(wagmiAdapterInstance.wagmiConfig);
+      const account = getCurrentAccount();
 
       // アドレスがあればそれを返し、なければ null を返す
       return account?.address || "NOT_INSTALLED";
@@ -121,7 +121,7 @@
       const config = wagmiAdapterInstance.wagmiConfig;
 
       // 1. ✨【条件分岐】今すでに接続済みのアドレスがあるかチェック
-      let account = getAccount(config);
+      let account = getCurrentAccount();
       if (account && account.address) {
         console.log("既存のセッションを検知しました。詳細画面を開きます。");
 
@@ -143,7 +143,7 @@
 
         const interval = setInterval(() => {
           attempts++;
-          const currentAccount = getAccount(config);
+          const currentAccount = getCurrentAccount();
 
           // ユーザーが承認してアドレスが取れた瞬間
           if (currentAccount && currentAccount.address) {
@@ -168,21 +168,52 @@
     }
   };
 
+  function getCurrentAccount() {
+    if (!wagmiAdapterInstance || !wagmiAdapterInstance.wagmiConfig) {
+      return null;
+    }
+
+    try {
+      // WagmiAdapter から config を取り出す
+      const config = wagmiAdapterInstance.wagmiConfig;
+
+      // window.ReownCore 経由で getConnection を呼び出し、config を渡す
+      if (window.ReownCore && typeof window.ReownCore.getConnection === 'function') {
+        const connection = window.ReownCore.getConnection(config);
+
+        // connection の構造: { address, addresses, isConnected, chainId, ... }
+        if (connection && connection.isConnected && connection.address) {
+          return {
+            address: connection.address,
+            chainId: connection.chainId
+          };
+        }
+      }
+    } catch (err) {
+      console.warn("Error getting connection from config:", err);
+    }
+
+    return null;
+  }
+
     // 以前の sendTransaction の代わりに writeContract を用意
-  window.writeContractJS = async function(contractAddress, abiJson, functionName, args) {
+  window.writeContractJS = async function(contractAddress, abiJson, functionName, argsJson) {
     if (!wagmiAdapterInstance) {
       console.error("Adapter not ready");
       return null;
     }
     try {
+      // 💡 window.ReownCore から writeContract を取得
+      const { writeContract } = window.ReownCore;
       const config = wagmiAdapterInstance.wagmiConfig;
       const abi = JSON.parse(abiJson);
+      const args = JSON.parse(argsJson); // 必要に応じてパース
 
       const txHash = await writeContract(config, {
         address: contractAddress,
         abi: abi,
         functionName: functionName,
-        args: args, // 配列形式で引数を渡す
+        args: args,
         chainId: 11155111,
       });
 

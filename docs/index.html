@@ -33,7 +33,7 @@
   <link rel="manifest" href="manifest.json">
 </head>
 <body>
-<script type="module" src="./js/reown-appkit3.js"></script>
+<script type="module" src="./js/reown-appkit4.js"></script>
 <script>
   let appKitInstance = null;
   let wagmiAdapterInstance = null;
@@ -78,7 +78,7 @@
         metadata: metadata,
         projectId: projectId,
         defaultNetwork: networks.polygon,
-        networks: [sepolia, polygon],
+        networks: [networks.sepolia, networks.polygon],
         features: {
         analytics: false,
         email: false
@@ -168,25 +168,27 @@
     }
   };
 
-   // ④ トランザクション送信（Dartから呼ばれる）
-  window.sendTransactionJS = async function(to, data) {
+    // 以前の sendTransaction の代わりに writeContract を用意
+  window.writeContractJS = async function(contractAddress, abiJson, functionName, args) {
     if (!wagmiAdapterInstance) {
       console.error("Adapter not ready");
       return null;
     }
     try {
-      const { sendTransaction } = window.ReownCore;
       const config = wagmiAdapterInstance.wagmiConfig;
+      const abi = JSON.parse(abiJson);
 
-      const txHash = await sendTransaction(config, {
+      const txHash = await writeContract(config, {
+        address: contractAddress,
+        abi: abi,
+        functionName: functionName,
+        args: args, // 配列形式で引数を渡す
         chainId: 11155111,
-        to: to,
-        data: data,
       });
 
       return txHash;
     } catch (e) {
-      console.error("Tx Error in index.html:", e);
+      console.error("Contract Write Error in index.html:", e);
       return "__ERROR__:" + e.message;
     }
   };

@@ -1,6 +1,6 @@
 {
     "name": "MetaMask JPYC Sub-Payment System",
-    "short_name": "erc681pay_dx",
+    "short_name": "Invoice Payment SubSystem",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

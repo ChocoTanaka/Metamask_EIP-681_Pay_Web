@@ -26,12 +26,10 @@ external JSString? jsGetWalletAddress();
 // 💡 window.disconnectWalletJS を定義
 @JS('disconnectWalletJS')
 external JSPromise<JSBoolean> jsDisconnectWalletJS();
-@JS('sendTransactionJS')
-external JSPromise<JSString?> _sendTransactionJS(JSAny tx);
 
 
 
-class Appkit{
+class Appkit {
 // 1. クラス内部で自分自身の唯一のインスタンスを作る
   static final Appkit _instance = Appkit._internal();
 
@@ -51,7 +49,9 @@ class Appkit{
 
   void waitForJsAndInit() {
     // 💡 window 直下に 'initReownApp' というプロパティ（関数）が生えたかチェック
-    final bool isJsReady = web.window.hasProperty('initReownApp'.toJS).toDart;
+    final bool isJsReady = web.window
+        .hasProperty('initReownApp'.toJS)
+        .toDart;
 
     if (isJsReady) {
       jsInitReownApp(const String.fromEnvironment("ProjectId").toJS);
@@ -71,7 +71,8 @@ class Appkit{
       final String? result = await connectWeb3();
 
       if (result == "OPENED") {
-        print("モーダルが正常に開きました。ユーザーのウォレット操作を待っています...");
+        print(
+            "モーダルが正常に開きました。ユーザーのウォレット操作を待っています...");
       } else {
         print("モーダルの起動に失敗、またはキャンセルされました。");
       }
@@ -161,23 +162,6 @@ class Appkit{
       }
     } catch (e) {
       print("切断処理中にエラーが発生しました: $e");
-    }
-  }
-
-  Future<String> requestSignatureJS(Map<String, dynamic> tx) async {
-    // DartのMapをJSオブジェクトに変換
-    // js_interopのユーティリティを使って変換するか、単純なjs_util等を使用
-    final jsTx = tx.jsify()!;
-
-    final JSString? txHash = await _sendTransactionJS(jsTx).toDart;
-
-    if (!(txHash!.toDart.contains("ERROR"))) {
-      print('Transaction Hash: ${txHash.toDart}');
-      // 成功後の処理
-      return "Success : ${txHash.toDart}";
-    } else {
-      print('Transaction failed or rejected');
-      return "Failure";
     }
   }
 }

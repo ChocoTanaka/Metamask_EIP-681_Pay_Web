@@ -69,7 +69,7 @@ class MPSs_Home extends State<MPSs_Stateful>{
     });
     Appkit().addressNotifier.addListener(_handleAppKitUpdate);
 
-
+    parseQueryParameters();
   }
 
   void parseQueryParameters() {
@@ -79,11 +79,6 @@ class MPSs_Home extends State<MPSs_Stateful>{
     final String? id = uri.queryParameters['id'];
     final String? address = uri.queryParameters['address'];
     final String? wei = uri.queryParameters['wei'];
-    final String? page = uri.queryParameters['page'];
-
-    if(page != null){
-
-    }
 
     if (wei !=null && id != null && address != null) {
       _onItemTapped(1);

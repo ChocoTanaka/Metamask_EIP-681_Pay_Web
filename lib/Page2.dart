@@ -37,7 +37,7 @@ class _MPSsState_Write extends State<Page2> {
 
 
   String URI2(String tag, String Address, String wei){
-    String uri = 'chocotanaka.tanakasenki-subpay.jp/#/?&id=$tag&address=$Address&wei=$wei';
+    String uri = 'chocotanaka.tanakasenki-subpay.jp/?&id=$tag&address=$Address&wei=$wei';
     return uri;
   }
 

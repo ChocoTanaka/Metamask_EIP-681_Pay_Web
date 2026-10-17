@@ -72,7 +72,7 @@ class _MPSsState_Read extends State<Page1> {
                   style: const TextStyle(fontSize: 28),
                 ),
                 Text(
-                  EIP712Data().wei_read != "" ? EIP712Data().wei_read : "NO DATA",
+                  EIP712Data().wei_read != "" ? EIP712Data().wei_read + "　JPYC" : "NO DATA",
                   style: const TextStyle(fontSize: 28),
                 ),
               ],

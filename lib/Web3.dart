@@ -1,22 +1,16 @@
 import 'dart:convert';
-import 'package:web3dart/web3dart.dart';
-import 'package:convert/convert.dart';
-import "dart:js_interop";
+import 'package:erc681pay_dx/reown.dart';
 
-@JS('sendTransactionJS')
-external JSPromise<JSString?> _sendTransactionJS(JSString to, JSString data);
+import "dart:js_interop";
 
 @JS('writeContractJS')
 external JSPromise<JSString> _writeContractJS(JSString contractAddress,JSString abiJson,JSString functionName,JSString args);
 
 final String jpycAddress = "0xE7C3D8C9a439feDe00D2600032D5dB0Be71C3c29";
 
-final String contract = "0x0a56120d6E1863cE8c80B78778675eCB761E9f19";
+final String contract = "0xC09EA87910aE6B99A7FFC49Ca4BaF164E59D40ba";
 
-final jpycTokenAddress = EthereumAddress.fromHex(jpycAddress);
 final JPYCDecimal = 18;
-
-final contractAddress = EthereumAddress.fromHex(contract);
 
 class EIP712Data{
   // 1. クラス内部で自分自身の唯一のインスタンスを作る
@@ -58,27 +52,6 @@ const erc20AbiMap = [
   }
 ];
 
-String generateApproveCallData(BigInt trueamount) {
-  // Sepolia JPYC トークンのコントラクトアドレス
-
-  // DeployedContract の作成
-  final jpycContract = DeployedContract(
-    ContractAbi.fromJson(jsonEncode(erc20AbiMap), 'ERC20'),
-    jpycTokenAddress,
-  );
-
-  // ★ ここで approve 関数オブジェクト（approveFunction）を取得！
-  final approveFunction = jpycContract.function('approve');
-
-  // Call Data のエンコード
-  final approveCallData = approveFunction.encodeCall([
-    contractAddress,
-    trueamount,
-  ]);
-
-  print('Approve CallData: 0x${hex.encode(approveCallData)}');
-  return "0x${hex.encode(approveCallData)}";
-}
 
 const AbiMap_Create =
 [
@@ -87,6 +60,7 @@ const AbiMap_Create =
     "name": "registerInvoice",
     "inputs": [
       {"name": "tag16", "type": "uint256"},
+      {"name": "tokenAddress", "type": "address"},
       {"name": "amount", "type": "uint256"},
       {"name": "deadline", "type": "uint256"}
     ],
@@ -96,10 +70,6 @@ const AbiMap_Create =
 ];
 // jsonEncode で完全に文字列化してから渡す
 final abiJson_create = jsonEncode(AbiMap_Create);
-final contract_create = DeployedContract(
-  ContractAbi.fromJson(abiJson_create, 'InvoiceTx'),
-  contractAddress,
-);
 
 const AbiMap_Pay =
 [
@@ -116,35 +86,23 @@ const AbiMap_Pay =
 ];
 // jsonEncode で完全に文字列化してから渡す
 final abiJson_pay = jsonEncode(AbiMap_Pay);
-final contract_create2 = DeployedContract(
-  ContractAbi.fromJson(abiJson_create, 'InvoiceTx'),
-  contractAddress,
-);
 
-/*
-const AbiMap_Status =
+
+const AbiMap_approve =
 [
   {
-    "type": "function",
-    "name": "getInvoiceStatus",
+    "constant": false,
     "inputs": [
-      {"name": "payee", "type": "address"},
-      {"name": "tag16", "type": "uint256"}
+      {"name": "spender", "type": "address"},
+      {"name": "amount", "type": "uint256"}
     ],
-    "outputs": [
-      {"name": "", "type": "uint8"}
-    ],
-    "stateMutability": "view"
+    "name": "approve",
+    "outputs": [{"name": "", "type": "bool"}],
+    "type": "function"
   }
 ];
-
 // jsonEncode で完全に文字列化してから渡す
-final abiJson_status = jsonEncode(AbiMap_Status);
-final contract_create3 = DeployedContract(
-  ContractAbi.fromJson(abiJson_create, 'InvoiceTx'),
-  contractAddress,
-);
-*/
+final abiJson_approve = jsonEncode(AbiMap_approve);
 
 //インボイスの作成
 Future<void>CreateInvoice({
@@ -157,7 +115,7 @@ Future<void>CreateInvoice({
   BigInt tag16Int = BigInt.from(num.parse(tag16));
 
   // 例: [tag16Int.toString(), amountWei.toString(), deadlineUnix.toString()] などをJSON化
-  final argsJson = jsonEncode([tag16Int.toString(), amountWei.toString(), DeadlineUnix.toString()]);
+  final argsJson = jsonEncode([tag16Int.toString(),jpycAddress, amountWei.toString(), DeadlineUnix.toString()]);
 
   final txHash = await _writeContractJS(
       contract.toJS,
@@ -174,37 +132,36 @@ Future<void>Pay({
   required String tag16,
   required BigInt amountWei
 }) async{
-  final Address_contract = EthereumAddress.fromHex(Address);
-  BigInt tag16BInt = BigInt.from(num.parse(tag16));
 
-  String approveCallDataHex = generateApproveCallData(amountWei);
+  // 5. 引数の配列をJSON化
+  final String argsJson = jsonEncode([
+    contract,
+    amountWei.toString(),
+  ]);
 
   // 送信先 (to) は JPYC のアドレス！
-  final approveTxHash = await _sendTransactionJS(
+  final approveTxHash = await _writeContractJS(
       jpycAddress.toJS,
-      approveCallDataHex.toJS
+      abiJson_approve.toJS,
+      "approve".toJS,
+      argsJson.toJS
   ).toDart;
 
-  print('Approve 送信完了! Hash: ${approveTxHash?.toDart}');
+  print('Approve 送信完了! Hash: ${approveTxHash.toDart}');
 
   // ★重要: オンチェーンで Approve トランザクションが承認（Blockに採り込まれる）されるまで数秒待ちます
   print('Approve の承認待ち...');
-  await Future.delayed(Duration(seconds: 15));
+  await Future.delayed(Duration(seconds: 30));
 
-  // 4. トランザクションデータのエンコード (MetaMask等に渡すデータ)
-  final functionCall = contract_create.function('createEscrow');
-  final transactionData = functionCall.encodeCall([
-    Address_contract,
-    tag16BInt
-  ]);
 
-  print('Encoded Transaction Data: 0x${hex.encode(transactionData)}');
+  final argsJson_pay = jsonEncode([Address, tag16.toString()]);
 
-  final String callDataHex = "0x${hex.encode(transactionData)}";
 
-  final txHash = await _sendTransactionJS(
+  final txHash = await _writeContractJS(
       contract.toJS,
-      callDataHex.toJS
+      abiJson_pay.toJS,
+      "payInvoice".toJS,
+      argsJson_pay.toJS
   ).toDart;
   print(txHash);
 

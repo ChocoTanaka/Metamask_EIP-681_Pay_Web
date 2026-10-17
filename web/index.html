@@ -77,7 +77,7 @@
         networks: selectedNetworks,
         metadata: metadata,
         projectId: projectId,
-        defaultNetwork: networks.polygon,
+        defaultNetwork: networks.sepolia,
         networks: [networks.sepolia, networks.polygon],
         features: {
         analytics: false,
@@ -111,7 +111,7 @@
   }
 
   // ③ ウォレット接続要求（Dartから呼ばれる）
-  window.connectMetaMask = async function() {
+  window.connectWeb3 = async function() {
     if (!appKitInstance || !wagmiAdapterInstance) {
       console.error("AppKit not ready");
       return null;
@@ -218,9 +218,12 @@
       });
 
       return txHash;
-    } catch (e) {
-      console.error("Contract Write Error in index.html:", e);
-      return "__ERROR__:" + e.message;
+    } catch (error) {
+      console.log("Contract Write Error in index.html:", error);
+      return "__ERROR__:" + error.message;
+      if(error.cause){
+        console.log("本当の原因:", error.cause);
+      }
     }
   };
 

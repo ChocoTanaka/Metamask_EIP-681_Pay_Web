@@ -18,8 +18,8 @@ String maskMiddle(String text, {int head = 6, int tail = 6}) {
 @JS('initReownApp')
 external void jsInitReownApp(JSString projectId);
 // JSの関数を定義
-@JS('connectMetaMask')
-external JSPromise<JSString?> jsConnectMetaMask();
+@JS('connectWeb3')
+external JSPromise<JSString?> jsConnectWeb3();
 // 💡 window.getWalletAddress を定義
 @JS('getWalletAddress')
 external JSString? jsGetWalletAddress();
@@ -85,14 +85,14 @@ class Appkit {
     final completer = Completer<String?>();
     // ① すでにJS側の関数（connectMetaMask）が存在するかチェック
     final bool isFnReady = web.window
-        .hasProperty('connectMetaMask'.toJS)
+        .hasProperty('connectWeb3'.toJS)
         .toDart;
     if (isFnReady) {
       try {
         print("ウォレット処理を開始します...");
 
         // JSの関数を呼び出し、Promiseが解決するのを待つ（新規なら承認待ち、接続済みなら即返る）
-        final JSString? result = await jsConnectMetaMask().toDart;
+        final JSString? result = await jsConnectWeb3().toDart;
 
         if (result != null) {
           final String address = result.toDart;
@@ -125,7 +125,7 @@ class Appkit {
             print("ウォレット処理を開始します...");
 
             // JSの関数を呼び出し、Promiseが解決するのを待つ（新規なら承認待ち、接続済みなら即返る）
-            final JSString? result = await jsConnectMetaMask().toDart;
+            final JSString? result = await jsConnectWeb3().toDart;
 
             if (result != null) {
               final String address = result.toDart;

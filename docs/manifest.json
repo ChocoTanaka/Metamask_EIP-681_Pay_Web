@@ -1,5 +1,5 @@
 {
-    "name": "MetaMask JPYC Sub-Payment System",
+    "name": "JPYC Sub-Payment System DX v2",
     "short_name": "Invoice Payment SubSystem",
     "start_url": ".",
     "display": "standalone",
@@ -10,23 +10,23 @@
     "prefer_related_applications": false,
     "icons": [
         {
-            "src": "icons/JPYCPay_192.png",
+            "src": "icons/JPYCPay_192v2.png",
             "sizes": "192x192",
             "type": "image/png"
         },
         {
-            "src": "icons/JPYCPay_512.png",
+            "src": "icons/JPYCPay_512v2.png",
             "sizes": "512x512",
             "type": "image/png"
         },
         {
-            "src": "icons/JPYCPay_192.png",
+            "src": "icons/JPYCPay_192v2.png",
             "sizes": "192x192",
             "type": "image/png",
             "purpose": "maskable"
         },
         {
-            "src": "icons/JPYCPay_512.png",
+            "src": "icons/JPYCPay_512v2.png",
             "sizes": "512x512",
             "type": "image/png",
             "purpose": "maskable"

@@ -21,11 +21,11 @@ MetaMaskから**支払書類を作成し、かつそれを証憑と連動させ�
 1. Web版を開く
 2. コネクトボタンを押す
 
-<img src="https://raw.githubusercontent.com/ChocoTanaka/Metamask_EIP-681_Pay_Web/master/assets/images/screenshot_intro2.png" alt="〇を押してね" title="〇を押してね">
+<img src="https://raw.githubusercontent.com/ChocoTanaka/Metamask_EIP-681_Pay_Web/subpay-v2/assets/images/screenshot_intro2.png" alt="〇を押してね" title="〇を押してね">
 
 3. 所定のウォレットを選択する（スマホなら所定のアプリに移動します）
 
-<img src="https://raw.githubusercontent.com/ChocoTanaka/Metamask_EIP-681_Pay_Web/master/assets/images/screenshot_connect2.png" alt="自由選択" title="自由選択">
+<img src="https://raw.githubusercontent.com/ChocoTanaka/Metamask_EIP-681_Pay_Web/subpay-v2/assets/images/screenshot_connect2.png" alt="自由選択" title="自由選択">
 
 4. ボタンが青くなったら完了。青くなってないなら、もう一回押して接続を確認しよう。
 
@@ -36,7 +36,7 @@ MetaMaskから**支払書類を作成し、かつそれを証憑と連動させ�
 2. 　確認後、「支払用紙PDFを発行する」を押す。
 
 
-<img src="https://raw.githubusercontent.com/ChocoTanaka/Metamask_EIP-681_Pay_Web/master/assets/images/testpdf5.png" alt="支払用紙" title="支払用紙">
+<img src="https://raw.githubusercontent.com/ChocoTanaka/Metamask_EIP-681_Pay_Web/subpay-v2/assets/images/testpdf5.png" alt="支払用紙" title="支払用紙">
 
 3. このPDFを保存する。
 
@@ -49,11 +49,11 @@ MetaMaskから**支払書類を作成し、かつそれを証憑と連動させ�
 1. 請求書のリンクを読み取り
 2. 金額・明細を確認して、OKを押す。
 3. 支払金額をウォレットで確認し
-   <img src="https://raw.githubusercontent.com/ChocoTanaka/Metamask_EIP-681_Pay_Web/master/assets/images/testpdf5.png" alt="支払画面" title="支払画面">
+   <img src="https://raw.githubusercontent.com/ChocoTanaka/Metamask_EIP-681_Pay_Web/subpay-v2/assets/images/testpdf5.png" alt="支払画面" title="支払画面">
 4. 時間が経ったら承認画面が出るので承認する。
 
 
-詳細な説明・スクリーンショットは[SubPayment解説2.pdf](https://github.com/ChocoTanaka/Metamask_EIP-681_Pay_Web/blob/master/SubPayment%E8%A7%A3%E8%AA%AC.pdf)を参照してください。
+詳細な説明・スクリーンショットは[SubPayment解説2.pdf](https://github.com/ChocoTanaka/Metamask_EIP-681_Pay_Web/blob/subpay-v2/SubPayment%E8%A7%A3%E8%AA%AC.pdf)を参照してください。
 
 ## 注意
 - Polygonネットワーク推奨（ガス代はPOLなどで別途必要）

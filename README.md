@@ -36,7 +36,7 @@ MetaMaskから**支払書類を作成し、かつそれを証憑と連動させ�
 2. 　確認後、「支払用紙PDFを発行する」を押す。
 
 
-<img src="https://raw.githubusercontent.com/ChocoTanaka/Metamask_EIP-681_Pay_Web/subpay-v2/assets/images/testpdf5.png" alt="支払用紙" title="支払用紙">
+<img src="https://raw.githubusercontent.com/ChocoTanaka/Metamask_EIP-681_Pay_Web/subpay-v2/assets/images/testpdf5.jpg" alt="支払用紙" title="支払用紙">
 
 3. このPDFを保存する。
 
@@ -49,7 +49,7 @@ MetaMaskから**支払書類を作成し、かつそれを証憑と連動させ�
 1. 請求書のリンクを読み取り
 2. 金額・明細を確認して、OKを押す。
 3. 支払金額をウォレットで確認し
-   <img src="https://raw.githubusercontent.com/ChocoTanaka/Metamask_EIP-681_Pay_Web/subpay-v2/assets/images/testpdf5.png" alt="支払画面" title="支払画面">
+   <img src="https://raw.githubusercontent.com/ChocoTanaka/Metamask_EIP-681_Pay_Web/subpay-v2/assets/images/screenshot_read2.png" alt="支払画面" title="支払画面">
 4. 時間が経ったら承認画面が出るので承認する。
 
 

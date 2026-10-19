@@ -22,7 +22,7 @@ Future makePdf(
   final fontData = await rootBundle.load('assets/fonts/NotoSansJP-Regular.ttf');
   final font = pw.Font.ttf(fontData);
 
-  final img = await rootBundle.load('assets/images/JPYCPay_192.png');
+  final img = await rootBundle.load('assets/images/JPYCPay_192v2.png');
   final imageBytes = img.buffer.asUint8List();
 
   final now = DateTime.now();

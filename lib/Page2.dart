@@ -164,7 +164,7 @@ class _MPSsState_Write extends State<Page2> {
                     );
                   },
                   child: Text(
-                    '請求書PDFを発行する',
+                    'PDFを発行する',
                     style: const TextStyle(fontSize: 28),
                   )
               ),

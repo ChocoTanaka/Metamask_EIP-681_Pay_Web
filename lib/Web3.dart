@@ -8,7 +8,7 @@ external JSPromise<JSString> _writeContractJS(JSString contractAddress,JSString 
 
 final String jpycAddress = "0xE7C3D8C9a439feDe00D2600032D5dB0Be71C3c29";
 
-final String contract = "0xC09EA87910aE6B99A7FFC49Ca4BaF164E59D40ba";
+final String contract = "0xA14E673D100cfe159CFfA4bACd6fd1BfEcbAff88";
 
 final JPYCDecimal = 18;
 
@@ -151,7 +151,7 @@ Future<void>Pay({
 
   // ★重要: オンチェーンで Approve トランザクションが承認（Blockに採り込まれる）されるまで数秒待ちます
   print('Approve の承認待ち...');
-  await Future.delayed(Duration(seconds: 30));
+  await Future.delayed(Duration(seconds: 20));
 
 
   final argsJson_pay = jsonEncode([Address, tag16.toString()]);

@@ -1,9 +1,5 @@
-import 'dart:async';
-import 'dart:io';
 import 'dart:js_interop';
-import 'dart:js_interop_unsafe';
 import 'package:erc681pay_dx/Web3.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'reown.dart';
 import 'Page1.dart';
@@ -33,7 +29,7 @@ class MPSs extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'MetaMask JPYC Sub-Payment System v2',
+      title: 'JPYC Sub-Payment System v2',
       theme: ThemeData(
         fontFamily: "Noto Sans JP",
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
@@ -85,7 +81,9 @@ class MPSs_Home extends State<MPSs_Stateful>{
       // 取得したIDとアドレスを使って処理を進める（画面に表示するなど）
       EIP712Data().wei_read = wei;
       EIP712Data().Address_read = address;
-      EIP712Data().tag_read = id;
+      if(id.length == 16){
+        EIP712Data().tag_read = id;
+      }
       print("取得したID: $id");
       print("取得したアドレス: $address");
     }
@@ -149,8 +147,8 @@ class MPSs_Home extends State<MPSs_Stateful>{
 
     // 各画面のタイトルのリスト
     final List<String> _titles = [
-      'WriteQR Metamask JPYC Sub-Payment System v2',
-      'ReadQR Metamask JPYC Sub-Payment System v2',
+      'Write Invoice JPYC Sub-Payment System v2',
+      'Read Invoice JPYC Sub-Payment System v2',
     ];
 
     return Scaffold(

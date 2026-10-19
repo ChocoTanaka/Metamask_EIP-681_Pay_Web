@@ -15,6 +15,15 @@ class Page1 extends StatefulWidget {
 
 class _MPSsState_Read extends State<Page1> {
 
+  String tag16toreadtag(String tag16) {
+    List<String> readtag = [];
+    for(int i = 0; i<4; i++){
+      readtag.add(tag16.substring(4*i , 4*i+4));
+    }
+
+    return "${readtag[0]}　-　${readtag[1]}　-　${readtag[2]}　-　${readtag[3]}";
+  }
+
 
   @override
   void initState(){
@@ -34,7 +43,7 @@ class _MPSsState_Read extends State<Page1> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-                "Metamask JPYC Sub-Payment System v2 Payment",
+                "JPYC Sub-Payment System v2 Payment",
                 style: const TextStyle(fontSize: 36),
             ),
             SizedBox(height: 60),
@@ -46,7 +55,7 @@ class _MPSsState_Read extends State<Page1> {
                   style: const TextStyle(fontSize: 28),
                 ),
                 Text(
-                  EIP712Data().tag_read.isNotEmpty ? EIP712Data().tag_read : "NO DATA",
+                  EIP712Data().tag_read.isNotEmpty ? tag16toreadtag(EIP712Data().tag_read) : "NO DATA",
                   style: const TextStyle(fontSize: 28),
                 ),
             ],
@@ -89,8 +98,10 @@ class _MPSsState_Read extends State<Page1> {
                     backgroundColor: (Appkit().userAddress !="" && EIP712Data().GotStatus()) ? Colors.blue[200] : Colors.grey,
                   ),
                   onPressed: () async{
-                    print("こっから実験する");
-                    await Pay(Address: EIP712Data().Address_read, tag16: EIP712Data().tag_read, amountWei: SetWei(int.tryParse(EIP712Data().wei_read)!));
+                    if(Appkit().userAddress !="" && EIP712Data().GotStatus()){
+                      print("こっから実験する");
+                      await Pay(Address: EIP712Data().Address_read, tag16: EIP712Data().tag_read, amountWei: SetWei(int.tryParse(EIP712Data().wei_read)!));
+                    }
                   },
                   child: Text(
                     '支払う',

@@ -53,7 +53,7 @@ MetaMaskから**支払書類を作成し、かつそれを証憑と連動させ�
 4. 時間が経ったら承認画面が出るので承認する。
 
 
-詳細な説明・スクリーンショットは[SubPayment解説2.pdf](https://github.com/ChocoTanaka/Metamask_EIP-681_Pay_Web/blob/subpay-v2/SubPayment%E8%A7%A3%E8%AA%AC.pdf)を参照してください。
+詳細な説明・スクリーンショットは[SubPayment解説2.pdf](https://github.com/ChocoTanaka/Metamask_EIP-681_Pay_Web/blob/subpay-v2/SubPaymentv2%E8%A7%A3%E8%AA%AC.pdf)を参照してください。
 
 ## 注意
 - Polygonネットワーク推奨（ガス代はPOLなどで別途必要）
